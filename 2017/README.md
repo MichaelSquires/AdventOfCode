@@ -22,3 +22,7 @@ sequence: `17, 31, 73, 47, 23` to the lengths. I accidentally added those length
 instead of `17, 31, 73, 47, 23`, I added `0x17, 0x31, 0x73, 0x47, 0x23`. Obviously, that caused my calculations to be
 wrong. After about an hour of beating my head on it, I went back and validated my solution with the challenge text and
 realized my mistake.
+
+#### Day 12 ####
+I used [NetworkX](https://networkx.github.io/) for this challenge. First, it made solving this challenge super easy.
+Second, NetworkX is a really amazing library. I'll definitely be using this one again in the future.
