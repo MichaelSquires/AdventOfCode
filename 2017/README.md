@@ -26,3 +26,30 @@ realized my mistake.
 #### Day 12 ####
 I used [NetworkX](https://networkx.github.io/) for this challenge. First, it made solving this challenge super easy.
 Second, NetworkX is a really amazing library. I'll definitely be using this one again in the future.
+
+#### Day 13 ####
+I started this challenge by recreating the "firewall" and stepping each layer for each "clock tick". I was about a
+quarter of the way through implementing that when I realized that there's probably a formula for figuring out the
+location of the scanner for each layer. It took me a few tries to figure out the formula but I got it worked out.
+
+I've been seeing a lot of talk about `pypy` is *much* faster when running programs like this where there are tight loops
+running or tight nested loops. I decided to give it a shot and it turns out they were right. Check out the performance
+difference below.
+
+  ```
+  $ time python3 day13.py input.txt
+  Part 1: 1876
+  Part 2: 3964778
+
+  real    0m9.759s
+  user    0m9.732s
+  sys     0m0.017s
+
+  $ time pypy3 day13.py input.txt
+  Part 1: 1876
+  Part 2: 3964778
+
+  real    0m1.205s
+  user    0m1.179s
+  sys     0m0.023s
+  ```
