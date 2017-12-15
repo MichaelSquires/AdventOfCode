@@ -53,3 +53,25 @@ difference below.
   user    0m1.179s
   sys     0m0.023s
   ```
+
+#### Day 15 ####
+Today's challenge seemed like a step down in difficulty. It was a lot easier than previous days.
+
+The real winner today is `pypy`. Check out these time differences:
+  ```
+  $ time python3 day15.py
+  Part 1: 638
+  Part 2: 343
+
+  real    2m27.687s
+  user    2m27.607s
+  sys     0m0.042s
+
+  $ time pypy3 day15.py
+  Part 1: 638
+  Part 2: 343
+
+  real    0m2.798s
+  user    0m2.770s
+  sys     0m0.025s
+  ```
