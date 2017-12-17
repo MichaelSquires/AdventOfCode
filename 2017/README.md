@@ -75,3 +75,10 @@ The real winner today is `pypy`. Check out these time differences:
   user    0m2.770s
   sys     0m0.025s
   ```
+
+#### Day 17 ####
+The first part of today's challenge wasn't bad at all. The second part of today was another one of those "iterate
+through this problem an intractable number of times so you can't brute force the problem" problem. I'd rather have
+problems that take some thought in creating a solution than having to figure out what the pattern of the random
+algorithm is and trying to short-circuit the algorithm. Part two of yesterday was similar. I hope this is the last of
+these types of challenges.
