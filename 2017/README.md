@@ -82,3 +82,11 @@ through this problem an intractable number of times so you can't brute force the
 problems that take some thought in creating a solution than having to figure out what the pattern of the random
 algorithm is and trying to short-circuit the algorithm. Part two of yesterday was similar. I hope this is the last of
 these types of challenges.
+
+#### Day 18 ####
+Part two took me longer than I wanted. I had a super-subtle bug that didn't affect part one so I got that answer right
+away but then P2 took forever. I assumed because P1 was working that my virtual machine implementation was solid.
+Wrong-o. After struggling with P2 for a while, I went back and re-read the challenge carefully and revalidated all of my
+assumptions and my solution. When I did that, I found the bug. It was in the `jgz` command. I had coded it so that if
+the value of the first operand was not zero, it would branch. The challenge (and, in retrospect, the name of the
+instruction) states that it should branch if the first operand is greater than zero.
