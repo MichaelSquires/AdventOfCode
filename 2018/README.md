@@ -1,5 +1,13 @@
 ## 2018 ##
 
+#### Leaderboard ####
+```
+      --------Part 1--------   -------Part 2--------
+Day       Time   Rank  Score       Time  Rank  Score
+  2   10:27:19  14081      0   10:53:02  12133      0
+  1   08:46:08  11019      0   08:58:17  8423       0
+```
+
 #### Day 1 ####
 I wasn't expecting to post a writeup for the first day's challenge but here it is.
 
