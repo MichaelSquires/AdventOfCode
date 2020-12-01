@@ -4,11 +4,11 @@ extern crate anyhow;
 
 use anyhow::Result;
 use std::io::{self, BufRead};
+#[allow(unused_imports)]
 use log::{debug, error, info, warn, trace};
 
 
-
-fn setup_logger(level: log::LevelFilter) -> Result<(), fern::InitError> {
+fn setup_logger(level: log::LevelFilter) -> Result<()> {
     let colors = fern::colors::ColoredLevelConfig::new()
         .error(fern::colors::Color::BrightRed)
         .warn(fern::colors::Color::BrightYellow)
@@ -80,7 +80,7 @@ fn main() -> Result<()> {
 
     let args = init()?;
 
-    let session_id: String = std::string::String::from_utf8(std::fs::read(args.value_of("sessfile").unwrap())?)?;
+    let session_id: String = std::fs::read_string(args.value_of("sessfile").unwrap())?;
 
     let url = format!("https://adventofcode.com/{}/day/{}/input",
         args.value_of("year").unwrap(),
@@ -97,13 +97,12 @@ fn main() -> Result<()> {
     debug!("Cookie: {}", cookie);
 
     let agent = ureq::agent();
-
     agent.set_cookie(cookie);
     debug!("Agent: {:?}", agent);
 
     let response = agent.get(&url).call();
 
-    anyhow::ensure!(response.ok(), "Invalid response: {}", response.status());
+    anyhow::ensure!(response.ok(), "Invalid response: {} {}", response.status(), response.status_text());
 
     let data = response.into_string()?;
 

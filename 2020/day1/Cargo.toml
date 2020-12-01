@@ -11,3 +11,4 @@ anyhow = ""
 clap = ""
 fern = { version = "", features = ["colored"] }
 log = ""
+itertools = ""
