@@ -2,10 +2,11 @@ extern crate fern;
 extern crate anyhow;
 
 use anyhow::Result;
-use log::{debug, error, info, warn, trace};
+#[allow(unused_imports)]
+use log::{debug, error, info, trace, warn};
 
 
-fn setup_logger(level: log::LevelFilter) -> Result<(), fern::InitError> {
+fn setup_logger(level: log::LevelFilter) -> Result<()> {
     let colors = fern::colors::ColoredLevelConfig::new()
         .error(fern::colors::Color::BrightRed)
         .warn(fern::colors::Color::BrightYellow)
@@ -46,8 +47,9 @@ fn init() -> Result<clap::ArgMatches<'static>> {
 
     setup_logger(
         match matches.occurrences_of("verbose") {
-            0 => { log::LevelFilter::Info }
-            1 => { log::LevelFilter::Debug }
+            0 => { log::LevelFilter::Warn }
+            1 => { log::LevelFilter::Info }
+            2 => { log::LevelFilter::Debug }
             _ => { log::LevelFilter::Trace }
         }
     )?;
@@ -55,57 +57,45 @@ fn init() -> Result<clap::ArgMatches<'static>> {
     Ok(matches)
 }
 
+const VALUE: u32 = 2020;
+
 fn main() -> Result<()> {
 
     let args = init()?;
 
-    let data: String = std::string::String::from_utf8(std::fs::read(args.value_of("infile").unwrap())?)?;
+    let data = std::fs::read_to_string(args.value_of("infile").unwrap())?;
 
     let values: Vec<u32> = data.lines().map(|line| line.parse::<u32>().unwrap()).collect();
 
-    let mut found = false;
+    let mut part1 = 0;
+    let mut part2 = 0;
 
     // PART 1
     for ii in values.iter() {
         for kk in values.iter() {
-            if ii + kk != 2020 {
-                continue;
+            if part1 == 0 && ii + kk == VALUE {
+                part1 = ii * kk;
             }
 
-            println!("PART 1: ii {}, kk {}, result {}", ii, kk, ii * kk);
-            found = true;
-            break;
-        }
+            if part2 == 0 {
+                for jj in values.iter() {
+                    if ii + kk + jj != VALUE  {
+                        continue;
+                    }
 
-        if found {
-            break;
-        }
-    }
-
-    found = false;
-
-    // PART 2
-    for ii in values.iter() {
-        for kk in values.iter() {
-            for jj in values.iter() {
-                if ii + kk + jj != 2020 {
-                    continue;
+                    part2 = ii * kk * jj;
+                    break;
                 }
-
-                println!("PART 2: ii {}, kk {}, jj {}, result {}", ii, kk, jj, ii * kk * jj);
-                found = true;
-                break;
-            }
-
-            if found {
-                break;
             }
         }
 
-        if found {
+        if part1 != 0 && part2 != 0 {
             break;
         }
     }
+
+    println!("PART 1: {}", part1);
+    println!("PART 2: {}", part2);
 
     Ok(())
 }
