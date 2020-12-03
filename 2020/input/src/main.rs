@@ -3,7 +3,6 @@ extern crate ureq;
 extern crate anyhow;
 
 use anyhow::Result;
-use std::io::{self, BufRead};
 #[allow(unused_imports)]
 use log::{debug, error, info, warn, trace};
 
@@ -80,7 +79,7 @@ fn main() -> Result<()> {
 
     let args = init()?;
 
-    let session_id: String = std::fs::read_string(args.value_of("sessfile").unwrap())?;
+    let session_id: String = std::fs::read_to_string(args.value_of("sessfile").unwrap())?;
 
     let url = format!("https://adventofcode.com/{}/day/{}/input",
         args.value_of("year").unwrap(),
