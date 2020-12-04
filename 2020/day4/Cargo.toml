@@ -1,7 +1,7 @@
 [package]
-name = "day3"
+name = "day4"
 version = "0.1.0"
-authors = ["Michael Squires <blackout@repmovsb.com>"]
+authors = ["MichaelSquires <blackout@repmovsb.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,3 +11,4 @@ anyhow = ""
 clap = ""
 fern = { version = "", features = ["colored"] }
 log = ""
+itertools = ""
