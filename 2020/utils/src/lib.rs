@@ -37,11 +37,8 @@ pub fn init(opts: Option<Vec<clap::Arg<'static, '_>>>) -> Result<clap::ArgMatche
         .multiple(true)];
 
     // Extend options with passed in arguments
-    match opts {
-        Some(v) => {
-            options.extend_from_slice(&v);
-        }
-        None => {}
+    if let Some(v) = opts {
+        options.extend_from_slice(&v);
     }
 
     // Create the parser and parse the command line

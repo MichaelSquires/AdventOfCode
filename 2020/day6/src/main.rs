@@ -40,7 +40,7 @@ fn main() -> Result<()> {
 
     // PART 2
     for group in groups.iter() {
-        let answers: Vec<&str> = group.split("\n").filter(|l| !l.is_empty()).collect();
+        let answers: Vec<&str> = group.split('\n').filter(|l| !l.is_empty()).collect();
 
         let yes: Vec<char> = answers[0]
             .chars()
