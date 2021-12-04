@@ -1,0 +1,5 @@
+#!/bin/sh
+
+PWD=`pwd`
+
+docker run -ti --rm -v ${PWD}:/work -w /work python:3.10 python $*
