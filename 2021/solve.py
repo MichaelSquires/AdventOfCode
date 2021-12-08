@@ -2,6 +2,7 @@
 
 import sys
 import code
+import copy
 import inspect
 import logging
 import argparse
@@ -47,12 +48,12 @@ def main(args):
 
     # Optionally run part 1
     if args.part in (None, 1):
-        ret = part1(data)
+        ret = part1(copy.copy(data))
         print(f'PART1: {ret}')
 
     # Optionally run part 2
     if args.part in (None, 2):
-        ret = part2(data)
+        ret = part2(copy.copy(data))
         print(f'PART2: {ret}')
 
     return 0
