@@ -1,6 +1,8 @@
 import logging
 import collections
 
+import utils
+
 Point = collections.namedtuple('Point', ['x', 'y'])
 Line = collections.namedtuple('Line', ['start', 'end'])
 
@@ -17,24 +19,10 @@ def parse(data):
     return ret
 
 
-class Grid:
-    def __init__(self, height, width):
-        logging.info('GRID: %s x %s', height, width)
-        self.height = height
-        self.width = width
-
-        self._grid = [0] * (height * width)
-
-    def get(self, x, y):
-        return self._grid[x + self.width * y]
-
-    def set(self, x, y, val):
-        logging.debug('X: %s, Y: %s', x, y)
-        self._grid[x + self.width * y] = val
-
+class Grid(utils.Grid):
     def inc(self, x, y):
         logging.debug('X: %s, Y: %s (%d)', x, y, x + self.width * y)
-        self._grid[x + self.width * y] += 1
+        self[x, y] += 1
 
     def print(self):
         for yy in range(self.height):
