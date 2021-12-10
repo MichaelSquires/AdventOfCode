@@ -16,9 +16,13 @@ def download(year, day):
 
     session = pathlib.Path('session.txt')
     if not session.exists():
-        raise Exception('session.txt file not found')
+        logging.warning('session.txt not found - not downloading input')
+        return
 
-    session_id = session.read_text()
+    # Create inputs path if it doesn't exist
+    pathlib.Path(f'inputs/{year}').mkdir(parents=True, exist_ok=True)
+
+    session_id = session.read_text().strip()
     url = f'https://adventofcode.com/{year}/day/{day}/input'
     cookies = dict(session=session_id)
 
