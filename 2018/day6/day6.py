@@ -18,14 +18,12 @@ class Location:
         return '%s' % (self.name)
 #        return '%s' % (len(self.bar))
 
-def Grid:
+class Grid:
     def __init__(self, height, width):
         self._height = height
         self._width = width
         self._grid = [[None for i in range(width)] for i in range(height)]
 
-    def set(self, name, x, y):
-        
 
 def part1(coords):
     # Find bounds of grid
