@@ -1,10 +1,6 @@
-#!/usr/bin/env python
-
-import sys
 import pprint
-import argparse
+import logging
 import itertools
-import traceback
 import collections
 
 from pyparsing import *
@@ -78,22 +74,6 @@ INPUT = Group(
 )
 INPUTS = OneOrMore(INPUT)
 
-'''
-class Aunt:
-    def __init__(self, name, children, cats, samoyeds, pomeranians, akitas, vizslas, goldfish, trees, cars, perfumes):
-        self.name = name
-        self.children = children
-        self.cats = cats
-        self.samoyeds = samoyeds
-        self.pomeranians = pomeranians
-        self.akitas = akitas
-        self.vizslas = vizslas
-        self.goldfish = goldfish
-        self.trees = trees
-        self.cars = cars
-        self.perfumes = perfumes
-'''
-
 Aunt = collections.namedtuple('Aunt', [
     'children', 
     'cats',
@@ -106,9 +86,6 @@ Aunt = collections.namedtuple('Aunt', [
     'cars',
     'perfumes'
 ])
-
-
-verbose = False
 
 CLUES = {
     'children': 3,
@@ -155,7 +132,7 @@ def part1(data):
         if matches > bestMatches:
             best = k
 
-    answer = [k for k,v in data.iteritems() if v == best]
+    answer = [k for k,v in data.items() if v == best]
     return answer[0]
 
 def part2(data):
@@ -208,24 +185,21 @@ def part2(data):
 
         if matches:
             x.append((matches, k))
-            print 'k', matches, k
-
+            logging.info('k', matches, k)
 
         if matches > bestMatches:
             best = k
 
     for m,n in x:
-        print [(k,m) for k,v in data.iteritems() if v == n]
+        logging.info([(k,m) for k,v in data.items() if v == n])
 
-    answer = [k for k,v in data.iteritems() if v == best]
-    print 'answer', answer
+    answer = [k for k,v in data.items() if v == best]
     return answer[0]
 
-def main(args):
+def parse(data):
+    data = INPUTS.parseString(data)
 
-    data = INPUTS.parseFile(args.file)
-
-    data = {k.name: Aunt(
+    return {k.name: Aunt(
             k.children or -1,
             k.cats or -1,
             k.samoyeds or -1,
@@ -238,45 +212,3 @@ def main(args):
             k.perfumes or -1
         ) for k in data
     }
-    '''
-    data = [
-        Aunt(
-            k.name, k.children, k.cats, k.samoyeds, 
-            k.pomeranians, k.akitas, k.vizslas, 
-            k.goldfish, k.trees, k.cars, k.perfumes
-        ) for k in data
-    ]
-    '''
-
-    if args.interact:
-        import code
-        code.interact(local=locals())
-
-    if verbose:
-        pprint.pprint(data)
-
-    print 'Part1: {}'.format(part1(data))
-    print 'Part2: {}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-i', '--interact', help='Interact with program', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)

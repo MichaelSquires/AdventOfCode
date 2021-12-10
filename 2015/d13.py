@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-
-import sys
-import argparse
+import logging
 import itertools
-import traceback
 
 from pyparsing import *
 
@@ -22,8 +18,6 @@ INPUT = Group(
 )
 
 INPUTS = OneOrMore(INPUT)
-
-verbose = False
 
 class Graph:
     def __init__(self):
@@ -44,17 +38,17 @@ class Graph:
     def getEdge(self, src, dst):
         return self.edges.get((src, dst))
 
-def parse_input(data):
+def parse(data):
     graph = Graph()
 
+    data = INPUTS.parseString(data)
     for line in data:
 
         direction = 1
         if line.direction == 'lose':
             direction = -1
 
-        if verbose:
-            print 'src: {}, dst: {}, distance: {}'.format(line.src, line.dst, line.value * direction)
+        logging.debug('src: {}, dst: {}, distance: {}'.format(line.src, line.dst, line.value * direction))
         graph.addEdge(line.src, line.dst, line.value * direction)
 
     return graph
@@ -81,51 +75,16 @@ def part1(graph):
             minlen = distance
             best = circuit
 
-    if verbose:
-        print 'Part2 iterations: {:d}'.format(count)
-
-    print 'best',best
     for i in range(len(circuit) - 1):
-        print '{} -> {}: {:d}'.format(circuit[i], circuit[i+1], graph.getEdge(circuit[i], circuit[i+1]))
+        logging.info('{} -> {}: {:d}'.format(circuit[i], circuit[i+1], graph.getEdge(circuit[i], circuit[i+1])))
+
     return minlen
 
-def main(args):
-
-    data = INPUTS.parseFile(args.file)
-    graph = parse_input(data)
-
-    if verbose:
-        print 'Vertices: {}'.format(graph.vertices)
-        print 'Edges: {}'.format(graph.edges)
-
-    print 'Part1: {:d}'.format(part1(graph))
-
+def part2(graph):
     # Add edges for the host. The host has a happiness rating of 0 for everyone
     for vertex in graph.vertices:
         graph.addEdge('host', vertex, 0)
         graph.addEdge(vertex, 'host', 0)
 
     # Re-run part1 with the host included
-    print 'Part2: {:d}'.format(part1(graph))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+    return part1(graph)

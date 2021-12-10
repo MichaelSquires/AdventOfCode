@@ -1,13 +1,6 @@
-#!/usr/bin/env python
-
-import sys
 import copy
-import pprint
-import argparse
+import logging
 import itertools
-import traceback
-
-verbose = False
 
 TOTAL_STEPS = 100
 
@@ -184,14 +177,12 @@ class GameOfLife:
 
 def part1(grid):
     game = GameOfLife(grid)
-    if verbose:
-        print game
+    logging.debug(game)
 
     for i in range(TOTAL_STEPS):
         game.step()
 
-    if verbose:
-        print game
+    logging.debug(game)
 
     return game.on
 
@@ -202,30 +193,18 @@ def part2(grid):
     game._grid[-1][0] = 1
     game._grid[-1][-1] = 1
 
-    if verbose:
-        print '----- START -----'
-        print game
-        print '-----------------'
+    logging.debug(game)
 
     for i in range(TOTAL_STEPS):
         game.step2()
-        if verbose:
-            print game
+        logging.debug(game)
 
-    if verbose:
-        print '-----  END  -----'
-        print game
-        print '-----------------'
+    logging.debug(game)
 
     return game.on
 
-def main(args):
-
-    data = args.file.readlines()
-
-    # Strip newlines
-    data = [k.strip() for k in data]
-
+def parse(data):
+    data = data.splitlines()
     grid = []
     for line in data:
         row = []
@@ -238,30 +217,4 @@ def main(args):
                 raise Exception('Invalid input: {}'.format(x))
 
         grid.append(row)
-                
-    print 'Part1: {:d}'.format(part1(grid))
-    print 'Part2: {:d}'.format(part2(grid))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-s', '--steps', help='Specify number of steps', type=int, default=TOTAL_STEPS)
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-    TOTAL_STEPS = args.steps
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+    return grid

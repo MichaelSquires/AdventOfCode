@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-
-import sys
 import pprint
 import string
-import argparse
+import logging
 import functools
-import traceback
-
-verbose = False
 
 def AND(x,y):
     return (x & y) & 0xffff
@@ -37,7 +31,7 @@ GATES = {
     'NOT': NOT,
 }
 
-for k,v in GATES.items():
+for k,v in list(GATES.items()):
     GATES[v] = k
 
 
@@ -53,7 +47,7 @@ class Wire:
     def compute(self, circuit):
 
         # Handle int/long types specially
-        if isinstance(self._x, (int, long)):
+        if isinstance(self._x, int):
             x = self._x
 
         # Otherwise, get the wire
@@ -61,7 +55,7 @@ class Wire:
             x = circuit.getWire(self._x)
 
         # Handle int/long types specially
-        if isinstance(self._y, (int, long)):
+        if isinstance(self._y, int):
             y = self._y
 
         # Otherwise, get the wire
@@ -71,8 +65,7 @@ class Wire:
         # Run the operation
         ret = self._op(x, y)
 
-        if verbose:
-            print '{}({}) {} {}({}) -> {}'.format(self._x, x, GATES.get(self._op), self._y, y, ret)
+        logging.debug('{}({}) {} {}({}) -> {}'.format(self._x, x, GATES.get(self._op), self._y, y, ret))
 
         return ret
 
@@ -102,16 +95,14 @@ class Circuit:
         self.__cache__ = {}
 
     def addWire(self, name, wire):
-        if verbose:
-            print 'addWire: {} -> {}'.format(wire, name)
+        logging.debug('addWire: {} -> {}'.format(wire, name))
         self._wires[name] = wire
 
     # Don't believe me that the cache is required? Comment 
     # out the following line and see for yourself
     @cached
     def getWire(self, name):
-        if verbose:
-            print 'getWire: {}'.format(name)
+        logging.debug('getWire: {}'.format(name))
         return self._wires[name].compute(self)
 
 def isNumber(token):
@@ -129,12 +120,13 @@ def isLower(token):
 def isGate(token):
     return token in GATES.keys()
 
-def parse_input(data):
+def parse(data):
+    data = data.splitlines()
+
     circuit = Circuit()
 
     for line in data:
-        if verbose:
-            print line
+        logging.debug(line)
         inputs, output = line.split(' -> ')
 
         inputs = inputs.split(' ')
@@ -184,45 +176,14 @@ def parse_input(data):
 
     return circuit
 
+def part1(circuit):
+    return circuit.getWire('a')
 
-def main(args):
-
-    data = args.file.readlines()
-
-    # Strip newlines
-    data = [k.strip() for k in data]
-
-    circuit = parse_input(data)
-
-    a_wire = circuit.getWire('a')
-    print 'Part1: {:d}'.format(a_wire)
-
+def part2(circuit):
     # <value of a wire> -> b
-    circuit.addWire('b', Wire(a_wire, 0, EQ))
+    circuit.addWire('b', Wire(circuit.getWire('a'), 0, EQ))
 
     # Clear the cache to reset all the computed values
     circuit.clearCache()
 
-    print 'Part2: {:d}'.format(circuit.getWire('a'))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+    return circuit.getWire('a')

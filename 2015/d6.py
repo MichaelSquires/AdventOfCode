@@ -1,22 +1,18 @@
-#!/usr/bin/env python
-
-import sys
 import string
-import argparse
-import traceback
-
-verbose = False
+import logging
 
 TOGGLE  = 0
 TURNON  = 1
 TURNOFF = 2
 
-def parse_input(data):
+def parse(data):
     # returns:
     #   List of commands as tuples
     #   Sample tuple:
     #       (TOGGLE, x1, y1, x2, y2)
     ret = []
+
+    data = data.splitlines()
 
     # Get rid of the word "turn"
     data = [k.replace('turn ', '') for k in data]
@@ -49,8 +45,7 @@ def part1(data):
         lights.append([0]*1000)
 
     for cmd, x1, y1, x2, y2 in data:
-        if verbose: 
-            print 'Cmd: {}, x1: {:d}, y1: {:d}, x2: {:d}, y2: {:d}'.format(cmd, x1, y1, x2, y2)
+        logging.debug('Cmd: {}, x1: {:d}, y1: {:d}, x2: {:d}, y2: {:d}'.format(cmd, x1, y1, x2, y2))
 
         for x in range(x1, x2+1):
             for y in range(y1, y2+1):
@@ -78,8 +73,7 @@ def part2(data):
         lights.append([0]*1000)
 
     for cmd, x1, y1, x2, y2 in data:
-        if verbose: 
-            print 'Cmd: {}, x1: {:d}, y1: {:d}, x2: {:d}, y2: {:d}'.format(cmd, x1, y1, x2, y2)
+        logging.debug('Cmd: {}, x1: {:d}, y1: {:d}, x2: {:d}, y2: {:d}'.format(cmd, x1, y1, x2, y2))
 
         for x in range(x1, x2+1):
             for y in range(y1, y2+1):
@@ -98,38 +92,3 @@ def part2(data):
             ret += lights[x][y]
             
     return ret
-        
-def main(args):
-    
-    data = args.file.readlines()
-
-    # Strip newlines
-    data = [k.strip() for k in data]
-
-    data = parse_input(data)
-
-    print 'Part 1: {:d}'.format(part1(data))
-    print 'Part 2: {:d}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    #parser.add_argument('-i', '--interact', help='Interact', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)

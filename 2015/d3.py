@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-
-import sys
-import argparse
-import traceback
-
-verbose = False
-
 def part1(data):
     x = 0
     y = 0
@@ -76,32 +68,3 @@ def part2(data):
         who += 1
 
     return len(houses)
-
-def main(args):
-    
-    data = args.file.read()
-    print 'Part 1: {:d}'.format(part1(data))
-    print 'Part 2: {:d}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    #parser.add_argument('-i', '--interact', help='Interact', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)

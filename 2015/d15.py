@@ -1,10 +1,5 @@
-#!/usr/bin/env python
-
-import sys
-import pprint
-import argparse
+import logging
 import itertools
-import traceback
 
 from pyparsing import *
 
@@ -58,7 +53,7 @@ class Ingredient:
         )
 
     def __mul__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             raise Exception('Invalid type')
 
         return Ingredient(
@@ -120,7 +115,7 @@ def sequence(maxval, width=1):
 
     _sequence = [0] * width
 
-    for i in xrange(endval):
+    for i in range(endval):
         index = width - 1
 
         div, mod = divmod(i, maxval)
@@ -159,8 +154,7 @@ def part1(data):
 
         # IF this is the best weight we've seen, record it
         if cookie.weight > best:
-            if verbose:
-                print 'weight:', cookie, ratio
+            logging.debug('weight:', cookie, ratio)
             best = cookie.weight
 
     return best
@@ -184,43 +178,11 @@ def part2(data):
 
         # IF this is the best weight we've seen, record it
         if cookie.weight > best:
-            if verbose:
-                print 'weight:', cookie, ratio
+            logging.debug('weight:', cookie, ratio)
             best = cookie.weight
 
     return best
 
-def main(args):
-
-    data = INPUTS.parseFile(args.file)
-
-    data = [Ingredient(k.name, k.capacity, k.durability, k.flavor, k.texture, k.calories) for k in data]
-
-    if verbose:
-        pprint.pprint(data)
-
-    print 'Part1: {:d}'.format(part1(data))
-    print 'Part2: {:d}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-i', '--interact', help='Show verbose messages', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+def parse(data):
+    data = INPUTS.parseString(data)
+    return [Ingredient(k.name, k.capacity, k.durability, k.flavor, k.texture, k.calories) for k in data]

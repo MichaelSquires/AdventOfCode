@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-
-import sys
 import string
-import argparse
-import traceback
-
-verbose = False
+import logging
 
 class Base26:
     __alphabet__ = string.ascii_lowercase
@@ -117,6 +111,7 @@ def part1(data):
     return b26.toString()
 
 def part2(data):
+    data = part1(data)
     b26 = Base26.b26decode(data)
 
     # The input from part1 is valid so increment by one
@@ -127,30 +122,5 @@ def part2(data):
 
     return b26.toString()
 
-def main(args):
-
-    p1 = part1(args.input)
-    print 'Part1: {}'.format(p1)
-    print 'Part2: {}'.format(part2(p1))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('input', help='Input', type=str)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+def parse(data):
+    return data.splitlines()[0]

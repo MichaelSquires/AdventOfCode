@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-
-import sys
 import string
-import argparse
-import traceback
-
-verbose = False
+import logging
 
 VOWELS = ['a', 'e', 'i', 'o', 'u']
 BADSEQS = ['ab', 'cd', 'pq', 'xy']
@@ -47,8 +41,7 @@ def part1(data):
         vowels = check_vowels(line)
         badseqs = check_badseqs(line)
         doubles = check_doubles(line)
-        if verbose:
-            print '{}: v {}, b {}, d {}'.format(line, vowels, badseqs, doubles)
+        logging.debug('{}: v {}, b {}, d {}'.format(line, vowels, badseqs, doubles))
 
         if vowels and doubles and not badseqs:
             nice += 1
@@ -82,7 +75,7 @@ def check_trigrams(data):
 
     for trigram in trigrams:
         if trigram[0] == trigram[2]:
-            if verbose: print 'Tri: {}'.format(trigram)
+            logging.debug('Tri: {}'.format(trigram))
             return True
 
     return False
@@ -95,45 +88,12 @@ def part2(data):
         digrams = check_digrams(line)
         trigrams = check_trigrams(line)
 
-        if verbose:
-            print '{}: d {}, t {}'.format(line, digrams, trigrams)
+        logging.debug('{}: d {}, t {}'.format(line, digrams, trigrams))
 
         if digrams and trigrams:
             nice += 1
 
     return nice
 
-    return 0
-
-def main(args):
-    
-    data = args.file.readlines()
-
-    # Strip newlines
-    data = [k.strip() for k in data]
-
-    print 'Part 1: {:d}'.format(part1(data))
-    print 'Part 2: {:d}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    #parser.add_argument('-i', '--interact', help='Interact', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+def parse(data):
+    return data.splitlines()

@@ -98,34 +98,5 @@ def part2(data):
     vm.run()
     return vm.registers['b']
 
-def main(args):
-
-    data = [k.strip().replace(',', '').split(' ') for k in args.file.readlines()]
-
-    if verbose:
-        pprint.pprint(data)
-
-    print 'Part1: {:d}'.format(part1(data))
-    print 'Part2: {:d}'.format(part2(data))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+def parse(data):
+    return [k.replace(',', '').split(' ') for k in data.splitlines()]

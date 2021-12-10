@@ -1,10 +1,5 @@
-#!/usr/bin/env python
-
-import sys
-import pprint
-import argparse
+import logging
 import itertools
-import traceback
 
 from pyparsing import *
 
@@ -75,12 +70,12 @@ def part2(reindeer):
 
         # Figure out who's in the lead
         first = 0
-        for k,v in times.iteritems():
+        for k,v in times.items():
             if v > first:
                 first = v
 
         # If a reindeer is in the lead (or tied), give a point
-        for k,v in times.iteritems():
+        for k,v in times.items():
             if v == first:
                 k.points += 1
 
@@ -92,9 +87,8 @@ def part2(reindeer):
 
     return best
 
-def main(args):
-
-    data = INPUTS.parseFile(args.file)
+def parse(data):
+    data = INPUTS.parseString(data)
 
     reindeer = []
     for line in data:
@@ -102,32 +96,4 @@ def main(args):
         r = Reindeer(line.name, line.speed, line.flytime, line.resttime)
         reindeer.append(r)
 
-    if verbose:
-        pprint.pprint(reindeer)
-
-    print 'Part1: {:d}'.format(part1(reindeer))
-    print 'Part2: {:d}'.format(part2(reindeer))
-
-    return 0
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-t', '--time', help='Set race time', type=int, default=TIMELIMIT)
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=file)
-
-    args = parser.parse_args()
-    verbose = args.verbose
-    TIMELIMIT = args.time
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        print 'ERROR: %s' % (exc)
-        if verbose:
-            traceback.print_exc()
-        sys.exit(-1)
+    return reindeer
