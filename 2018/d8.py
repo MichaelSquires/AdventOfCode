@@ -36,26 +36,29 @@ class Node:
 
         return ret
 
-def parse(data):
-
+def _parse(data):
     node = Node()
 
     children = data.pop(0)
     mdcount = data.pop(0)
 
     for i in range(children):
-        node.children.append(parse(data))
+        node.children.append(_parse(data))
 
     for i in range(mdcount):
         node.metadata.append(data.pop(0))
 
     return node
 
+def parse(data):
+    data = list(map(int, data.strip().split()))
+    return _parse(data)
+
 def part1(tree):
-    print('Part 1:', tree.total)
+    return tree.total
 
 def part2(tree):
-    print('Part 2:', tree.value)
+    return tree.value
 
 def main(args):
 
