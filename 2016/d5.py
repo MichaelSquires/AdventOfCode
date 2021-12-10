@@ -1,21 +1,8 @@
-#!/usr/bin/env python
-
-import sys
 import hashlib
 import logging
-import argparse
 
-def main(args):
-    doorid = args.id.strip()
-    print ('Using door ID: %r' % (doorid))
-
-    if args.part in (None, 1):
-        part1(doorid)
-
-    if args.part in (None, 2):
-        part2(doorid)
-
-    return 0
+def parse(data):
+    return data.splitlines()[0]
 
 def part1(doorid):
     index = 0
@@ -33,7 +20,7 @@ def part1(doorid):
         password += digest[5]
         digest = ''
 
-    print('Part 1:', password)
+    return password
 
 def part2(doorid):
     index = 0
@@ -62,24 +49,4 @@ def part2(doorid):
         if password[position] is None:
             password[position] = value
 
-    print('Part 2:', ''.join(password))
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[1,2])
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('id', help='Door ID')
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return ''.join(password)

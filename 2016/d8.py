@@ -1,10 +1,6 @@
-#!/usr/bin/env python
-
 import re
-import sys
 import copy
 import logging
-import argparse
 import collections
 
 SCREEN_HEIGHT = 6
@@ -121,9 +117,9 @@ rotcol_re = re.compile('^rotate column x=(?P<a>\d+) by (?P<b>\d+)$')
 # rotate row y=0 by 4
 rotrow_re = re.compile('^rotate row y=(?P<a>\d+) by (?P<b>\d+)$')
 
-def main(args):
+def parse(data):
     instructions = []
-    for line in args.file.readlines():
+    for line in data.splitlines():
         if line.startswith('rect'):
             match = rect_re.match(line)
             if match is None:
@@ -149,41 +145,15 @@ def main(args):
             verb, int(match.group('a')), int(match.group('b'))
         ))
 
-    if args.part in (None, 1):
-        part1(instructions)
-
-    if args.part in (None, 2):
-        part2(instructions)
-
-    return 0
+    return instructions
 
 def part1(instructions):
     screen = Screen(SCREEN_HEIGHT, SCREEN_WIDTH)
     for instruction in instructions:
         screen.exec(instruction)
 
-    print('Part 1:', screen.on)
+    return screen.on
 
 def part2(instructions):
     screen = Screen(SCREEN_HEIGHT, SCREEN_WIDTH)
-    print('Part 2:', screen)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[1,2])
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return screen

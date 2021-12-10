@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-import sys
 import logging
-import argparse
 
 class Keypad:
     _keypad = {
@@ -73,13 +69,8 @@ class Keypad2(Keypad):
         self.x = -2
         self.y = 0
 
-def main(args):
-    instructions = args.input.readlines()
-
-    part1(instructions)
-    part2(instructions)
-
-    return 0
+def parse(data):
+    return data.splitlines()
 
 def part1(instructions):
     code = []
@@ -89,7 +80,7 @@ def part1(instructions):
         keypad.doInstruction(instruction)
         code.append(keypad.button)
 
-    print('Part 1:', ''.join(code))
+    return ''.join(code)
 
 def part2(instructions):
     code = []
@@ -99,23 +90,4 @@ def part2(instructions):
         keypad.doInstruction(instruction)
         code.append(keypad.button)
 
-    print('Part 2:', ''.join(code))
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('input', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return ''.join(code)

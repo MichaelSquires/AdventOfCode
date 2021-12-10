@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-
 import re
-import sys
 import logging
-import argparse
 
 class Triangle:
     def __init__(self, a, b, c):
@@ -21,9 +17,9 @@ class Triangle:
 
 regex = re.compile(r'^\s+(\d+)\s+(\d+)\s+(\d+)$')
 
-def main(args):
+def parse(data):
     dimensions = []
-    for line in args.input.readlines():
+    for line in data.splitlines():
         m = regex.match(line)
 
         dimensions.append((
@@ -32,10 +28,7 @@ def main(args):
             int(m.group(3))
         ))
 
-    part1(dimensions)
-    part2(dimensions)
-
-    return 0
+    return dimensions
 
 def part1(dimensions):
     possible = 0
@@ -45,7 +38,7 @@ def part1(dimensions):
         if triangle.possible:
             possible += 1
 
-    print('Part 1:', possible)
+    return possible
 
 def part2(dimensions):
     possible = 0
@@ -59,23 +52,4 @@ def part2(dimensions):
             if triangle.possible:
                 possible += 1
 
-    print('Part 2:', possible)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('input', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return possible

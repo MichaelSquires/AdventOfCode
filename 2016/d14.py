@@ -1,21 +1,8 @@
-#!/usr/bin/env python
-
-import sys
 import hashlib
 import logging
-import argparse
 
-def main(args):
-    data = args.file.read().strip()
-
-    if args.part in (None, 1):
-        part1(data)
-
-    if args.part in (None, 2):
-        part2(data)
-
-    return 0
-
+def parse(data):
+    return data.strip()
 TRIPLES = {
     k*3 for k in '0123456789abcdef'
 }
@@ -81,31 +68,7 @@ def getkey(salt, rounds=1):
     return index
 
 def part1(salt):
-    index = getkey(salt)
-    print('Part 1:', index)
+    return getkey(salt)
 
 def part2(salt):
-    index = getkey(salt, 2017)
-    print('Part 2:', index)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[1,2])
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-    else:
-        logging.getLogger().setLevel(logging.INFO)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return getkey(salt, 2017)

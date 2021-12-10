@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-import sys
 import logging
-import argparse
 import functools
 
 VALID_COMMANDS = [
@@ -269,45 +265,18 @@ class VirtualMachine:
     def d(self, value):
         self.registers['d'] = value
 
-def main(args):
-    instructions = [k.strip() for k in args.file.readlines()]
+def parse(data):
+    return data.splitlines()
 
-    if args.part in (None, 1):
-        part1(instructions)
-
-    if args.part in (None, 2):
-        part2(instructions)
-
-    return 0
 
 def part1(instructions):
     vm = VirtualMachine(instructions)
     vm.a = 7
     vm.run()
-    print('Part 1:', vm.a)
+    return vm.a
 
 def part2(instructions):
     vm = VirtualMachine(instructions)
     vm.a = 12
     vm.run()
-    print('Part 2:', vm.a)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[1,2])
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('file', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return vm.a

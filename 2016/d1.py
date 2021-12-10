@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-import sys
 import logging
-import argparse
 
 NORTH = 0
 EAST = 1
@@ -68,18 +64,12 @@ class Grid:
 
         self.doDirection(direction, distance)
 
-def main(args):
+def parse(data):
     # Read and normalize input
-    data = args.input.read()
     data = data.replace('\n', '')
     data = data.replace(' ', '')
 
-    instructions = data.split(',')
-
-    part1(instructions)
-    part2(instructions)
-
-    return 0
+    return data.split(',')
 
 def part1(instructions):
     grid = Grid()
@@ -87,8 +77,7 @@ def part1(instructions):
     for instruction in instructions:
         grid.doInstruction(instruction)
 
-    print('Part 1:', (grid.x, grid.y))
-    print('Part 1:', grid.x + grid.y)
+    return grid.x + grid.y
 
 def part2(instructions):
     grid = Grid()
@@ -96,24 +85,4 @@ def part2(instructions):
     for instruction in instructions:
         grid.doInstruction(instruction)
 
-    print('Part 2:', grid.first)
-    print('Part 2:', grid.first[0] + grid.first[1])
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog=sys.argv[0])
-
-    # Optional arguments
-    parser.add_argument('-v', '--verbose', help='Show verbose messages', action='store_true')
-
-    # Positional arguments
-    parser.add_argument('input', help='Input file', type=open)
-
-    args = parser.parse_args()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        sys.exit(main(args))
-    except Exception as exc:
-        logging.exception('ERROR in main: %s', exc)
-        sys.exit(-1)
+    return grid.first[0] + grid.first[1]
