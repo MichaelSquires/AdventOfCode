@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "solve.py",
-            "args": [ "${input:day}" ],
+            "args": [ "-y", "${input:year}", "${input:day}" ],
             "console": "integratedTerminal"
         }
     ],
@@ -21,6 +21,15 @@
             "args": {
                 "id": "day",
                 "description": "Enter day to run",
+            }
+        },
+        {
+            "id": "year",
+            "type": "command",
+            "command": "memento.promptString",
+            "args": {
+                "id": "year",
+                "description": "Enter year to run",
             }
         }
     ]
