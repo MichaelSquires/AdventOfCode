@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Advent Of Code Runner",
+            "type": "python",
+            "request": "launch",
+            "program": "solve.py",
+            "args": [ "-y", "${input:year}", "${input:day}" ],
+            "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "day",
+            "type": "command",
+            "command": "memento.promptString",
+            "args": {
+                "id": "day",
+                "description": "Enter day to run",
+            }
+        },
+        {
+            "id": "year",
+            "type": "command",
+            "command": "memento.promptString",
+            "args": {
+                "id": "year",
+                "description": "Enter year to run",
+            }
+        }
+    ]
+}

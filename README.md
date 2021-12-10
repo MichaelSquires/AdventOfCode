@@ -1,7 +1,20 @@
-[Advent of Code](http://adventofcode.com) solutions. See the README in each year for various non-spoiler comments about the challenges.
-* [2015](2015/README.md)
-* [2016](2016/README.md)
-* [2017](2017/README.md)
-* [2018](2018/README.md)
+[Advent of Code](http://adventofcode.com) solutions
 
-**NOTE**: I will hold off on posting my solutions for each of the challenges until at least the day after the challenge opens.
+## Building
+- Check out and open in VS Code
+- Install the recommended Remote Containers extension
+- Open the project in the dev container
+
+## Running
+VS Code: Push <F5> and answer the prompts (year and day)
+Shell: `python3 solve.py <day>`
+
+## Notes
+- The solution will automatically download the day's input if it doesn't already exist
+
+## Adding new solutions
+- Create a new dXX.py for the current day in the appropriate year folder
+- Add `def parse(data):`, `def part1(data):`, and `def part2(data):` functions to solution
+  - The `parse` function is optional
+  - The data returned from `parse` is copied before passing to each of the functions so
+    changes to the underlying data won't transfer between parts

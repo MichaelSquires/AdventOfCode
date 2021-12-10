@@ -1,0 +1,4 @@
+requests
+pyparsing
+networkx
+numpy
