@@ -137,8 +137,7 @@ def part1(data):
         if curr == len(lines):
             break
 
-    print(f'COUNT: {count}')
-
+    return count
 
 def part2(data):
     count = 0
@@ -148,7 +147,7 @@ def part2(data):
     prev = 100000
     while True:
         window = lines[idx-2] + lines[idx-1] + lines[idx]
-        print(f'WINDOW: {window}')
+        logging.info(f'WINDOW: {window}')
         if window > prev:
             count += 1
 
@@ -158,4 +157,4 @@ def part2(data):
         if idx == len(lines):
             break
 
-    print(f'COUNT: {count}')
+    return count

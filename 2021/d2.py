@@ -115,8 +115,7 @@ def part1(data):
     logging.debug('POS: %s', pos)
     logging.debug('DEPTH: %s', depth)
 
-    print(f'ANS: {pos * depth}')
-
+    return pos * depth
 
 def part2(data):
     aim = 0
@@ -136,7 +135,7 @@ def part2(data):
     logging.debug('POS: %s', pos)
     logging.debug('DEPTH: %s', depth)
 
-    print(f'ANS: {pos * depth}')
+    return pos * depth
 
 Command = collections.namedtuple('Command', ('direction', 'distance'))
 def make(t):
