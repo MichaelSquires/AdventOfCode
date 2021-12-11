@@ -1,6 +1,9 @@
 import logging
 import pathlib
+import textwrap
+import itertools
 
+import bs4
 import requests
 
 __all__ = [
@@ -8,6 +11,55 @@ __all__ = [
     'Grid',
     'up', 'down', 'left', 'right'
 ]
+
+def template(year, day):
+    req = requests.get(f'https://adventofcode.com/{year}/day/{day}')
+    if not req.ok:
+        raise Exception(f'Error downloading challenge text: {req.reason}')
+
+    soup = bs4.BeautifulSoup(req.text, 'html.parser')
+
+    text = ''
+    for tag in soup.article:
+        match tag.name:
+            case 'h2':
+                text += f'## {tag.text}\n\n'
+
+            case 'p':
+                text += '\n'.join(textwrap.wrap(tag.text, width=80))
+                text += '\n\n'
+
+            case 'pre':
+                text += '```\n'
+                text += tag.text
+                text += '```\n\n'
+
+            case 'ul':
+                for item in tag:
+                    if item.name != 'li':
+                        continue
+
+                    text += '\n'.join(textwrap.wrap(item.text, width=80, initial_indent='  - ', subsequent_indent='    '))
+                    text += '\n\n'
+
+    template = ''
+    template += '\'\'\'\n'
+    template += f'{text}'
+    template += '\'\'\'\n'
+
+    template += 'def parse(data):\n'
+    template += '    return data\n'
+    template += '\n'
+
+    template += 'def part1(data):\n'
+    template += '    pass\n'
+    template += '\n'
+
+    template += 'def part2(data):\n'
+    template += '    pass'
+         
+    outfile = pathlib.Path(f'{year}/d{day}.py')
+    outfile.write_text(template)
 
 def download(year, day):
     outfile = pathlib.Path(f'inputs/{year}/d{day}.txt')
@@ -27,7 +79,7 @@ def download(year, day):
     cookies = dict(session=session_id)
 
     req = requests.get(url, cookies=cookies)
-    if req.status_code != 200:
+    if not req.ok:
         raise Exception(f'Error downloading input data: {req.reason}')
 
     logging.debug('Writing input data: %s', req.text)
@@ -57,7 +109,6 @@ def right(x, y):
     '''
     return x + 1, y
 
-
 class Grid:
     def __init__(self, height, width):
         logging.info('GRID: %s x %s', height, width)
@@ -73,10 +124,7 @@ class Grid:
 
         grid = cls(height, width)
 
-        flat = []
-        for line in data:
-            flat.extend(line)
-        grid._grid = flat
+        grid._grid = list(itertools.chain(*data))
 
         return grid
 
@@ -89,6 +137,12 @@ class Grid:
 
         x, y = key
 
+        if x < 0 or x >= self.width:
+            return 0
+
+        if y < 0 or y >= self.height:
+            return 0
+
         return self._grid[x + self.width * y]
 
     def __setitem__(self, key, value):
@@ -99,6 +153,12 @@ class Grid:
             raise TypeError('Invalid type: %s' % type(key))
 
         x, y = key
+
+        if x < 0 or x >= self.width:
+            return
+
+        if y < 0 or y >= self.height:
+            return
 
         self._grid[x + self.width * y] = value
 

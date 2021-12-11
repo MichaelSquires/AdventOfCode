@@ -15,10 +15,20 @@ NOW = datetime.datetime.now()
 
 def main(args):
 
-    # Retrieve module for given year and day
-    mod = importlib.import_module(f'{args.year}.d{args.day}')
-    if mod is None:
-        raise NotImplemented(f'{args.year}.d{args.day}')
+    year = args.year
+    if year == 0:
+        year = NOW.year
+
+    try:
+        # Retrieve module for given year and day
+        mod = importlib.import_module(f'{year}.d{args.day}')
+        if mod is None:
+            raise NotImplemented(f'{year}.d{args.day}')
+
+    except ModuleNotFoundError:
+        logging.error(f'Module {year}/d{args.day}.py not found. Creating template')
+        utils.template(year, args.day)
+        return -1
 
     # Get functions from module and validate them
     parse = getattr(mod, 'parse', None)
@@ -31,11 +41,11 @@ def main(args):
         raise Exception('Invalid day module')
 
     if not args.no_download:
-        utils.download(args.year, args.day)
+        utils.download(year, args.day)
 
     filename = args.file
-    if filename is None:
-        filename = f'inputs/{args.year}/d{args.day}.txt'
+    if not filename:
+        filename = f'inputs/{year}/d{args.day}.txt'
 
     # Read data from input file
     data = open(filename, 'rb').read().decode('utf8')
@@ -50,12 +60,12 @@ def main(args):
 
     # Optionally run part 1
     if args.part in (None, 1):
-        ret = part1(copy.copy(data))
+        ret = part1(copy.deepcopy(data))
         print(f'PART1: {ret}')
 
     # Optionally run part 2
     if args.part in (None, 2):
-        ret = part2(copy.copy(data))
+        ret = part2(copy.deepcopy(data))
         print(f'PART2: {ret}')
 
     return 0

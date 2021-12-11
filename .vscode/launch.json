@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "solve.py",
-            "args": [ "-y", "${input:year}", "${input:day}" ],
+            "args": [ "-y", "${input:year}", "${input:day}", "${input:file}" ],
             "console": "integratedTerminal"
         }
     ],
@@ -30,6 +30,17 @@
             "args": {
                 "id": "year",
                 "description": "Enter year to run",
+                "default": "0",
+                "placeholder": "Year"
+            }
+        },
+        {
+            "id": "file",
+            "type": "command",
+            "command": "memento.promptString",
+            "args": {
+                "id": "file",
+                "description": "Input file (optional)",
             }
         }
     ]

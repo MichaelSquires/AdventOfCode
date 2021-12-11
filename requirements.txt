@@ -2,3 +2,4 @@ requests
 pyparsing
 networkx
 numpy
+bs4
