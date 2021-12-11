@@ -2,19 +2,20 @@
 
 ## Building
 - Check out and open in VS Code
-- Install the recommended Remote Containers extension
+- Install the recommended Remote Containers extension (inside the container)
 - Open the project in the dev container
 
 ## Running
-VS Code: Push <F5> and answer the prompts (year and day)
+VS Code: Push `<F5>` and answer the prompts (year and day)
 Shell: `python3 solve.py <day>`
 
 ## Notes
 - The solution will automatically download the day's input if it doesn't already exist
 
 ## Adding new solutions
-- Create a new dXX.py for the current day in the appropriate year folder
-- Add `def parse(data):`, `def part1(data):`, and `def part2(data):` functions to solution
-  - The `parse` function is optional
-  - The data returned from `parse` is copied before passing to each of the functions so
-    changes to the underlying data won't transfer between parts
+- Run `solve.py` with a new year/day. If the module doesn't exist, it will be
+  created with a default template
+
+## Download challenge text
+After completing both parts (so you get part two also), run `solve.py -c <DAY>`
+to download the challenge text directly to the top of the year/day module.
