@@ -7,46 +7,68 @@ import bs4
 import requests
 
 __all__ = [
+    'challenge',
     'download',
+    'template',
+
     'Grid',
     'up', 'down', 'left', 'right'
 ]
 
-def template(year, day):
-    req = requests.get(f'https://adventofcode.com/{year}/day/{day}')
-    if not req.ok:
-        raise Exception(f'Error downloading challenge text: {req.reason}')
+def open_aoc(url):
+    session = pathlib.Path('session.txt')
+    if not session.exists():
+        raise FileNotFoundError('session.txt')
 
+    session_id = session.read_text().strip()
+    cookies = dict(session=session_id)
+
+    req = requests.get(url, cookies=cookies)
+    if not req.ok:
+        raise Exception(f'Error downloading AoC data: {req.reason}')
+
+    return req
+
+def challenge(year, day):
+    req = open_aoc(f'https://adventofcode.com/{year}/day/{day}')
     soup = bs4.BeautifulSoup(req.text, 'html.parser')
 
     text = ''
-    for tag in soup.article:
-        match tag.name:
-            case 'h2':
-                text += f'## {tag.text}\n\n'
+    text += '\'\'\'\n'
 
-            case 'p':
-                text += '\n'.join(textwrap.wrap(tag.text, width=80))
-                text += '\n\n'
+    for article in soup.findAll('article'):
+        for tag in article:
+            match tag.name:
+                case 'h2':
+                    text += f'## {tag.text}\n\n'
 
-            case 'pre':
-                text += '```\n'
-                text += tag.text
-                text += '```\n\n'
-
-            case 'ul':
-                for item in tag:
-                    if item.name != 'li':
-                        continue
-
-                    text += '\n'.join(textwrap.wrap(item.text, width=80, initial_indent='  - ', subsequent_indent='    '))
+                case 'p':
+                    text += '\n'.join(textwrap.wrap(tag.text, width=80))
                     text += '\n\n'
 
-    template = ''
-    template += '\'\'\'\n'
-    template += f'{text}'
-    template += '\'\'\'\n'
+                case 'pre':
+                    text += '```\n'
+                    text += tag.text
+                    if not tag.text.endswith('\n'):
+                        text += '\n'
+                    text += '```\n\n'
 
+                case 'ul':
+                    for item in tag:
+                        if item.name != 'li':
+                            continue
+
+                        text += '\n'.join(textwrap.wrap(item.text, width=80, initial_indent='  - ', subsequent_indent='    '))
+                        text += '\n\n'
+
+    text += '\'\'\'\n'
+
+    outfile = pathlib.Path(f'{year}/d{day}.py')
+    text += outfile.read_text()
+    outfile.write_text(text)
+
+def template(year, day):
+    template = ''
     template += 'def parse(data):\n'
     template += '    return data\n'
     template += '\n'
@@ -66,21 +88,11 @@ def download(year, day):
     if outfile.exists():
         return
 
-    session = pathlib.Path('session.txt')
-    if not session.exists():
-        logging.warning('session.txt not found - not downloading input')
-        return
-
     # Create inputs path if it doesn't exist
     pathlib.Path(f'inputs/{year}').mkdir(parents=True, exist_ok=True)
 
-    session_id = session.read_text().strip()
     url = f'https://adventofcode.com/{year}/day/{day}/input'
-    cookies = dict(session=session_id)
-
-    req = requests.get(url, cookies=cookies)
-    if not req.ok:
-        raise Exception(f'Error downloading input data: {req.reason}')
+    req = open_aoc(url)
 
     logging.debug('Writing input data: %s', req.text)
     outfile.write_text(req.text)

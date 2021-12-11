@@ -30,6 +30,10 @@ def main(args):
         utils.template(year, args.day)
         return -1
 
+    if args.challenge:
+        utils.challenge(year, args.day)
+        return
+
     # Get functions from module and validate them
     parse = getattr(mod, 'parse', None)
     part1 = getattr(mod, 'part1')
@@ -74,6 +78,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=sys.argv[0])
 
     # Optional arguments
+    parser.add_argument('-c', '--challenge', help='Download challenge text', action='store_true')
     parser.add_argument('-i', '--interact', help='Interact with data', action='store_true')
     parser.add_argument('-n', '--no-download', help='Do not check and download input data', action='store_true')
     parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[0, 1, 2])
