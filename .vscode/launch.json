@@ -5,11 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Advent Of Code Runner",
+            "name": "Run solver",
             "type": "python",
             "request": "launch",
             "program": "solve.py",
-            "args": [ "-y", "${input:year}", "${input:day}", "${input:file}" ],
+            "args": [ "${input:day}" ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Download challenge text",
+            "type": "python",
+            "request": "launch",
+            "program": "solve.py",
+            "args": [ "-c", "${input:day}" ],
             "console": "integratedTerminal"
         }
     ],
@@ -21,26 +29,6 @@
             "args": {
                 "id": "day",
                 "description": "Enter day to run",
-            }
-        },
-        {
-            "id": "year",
-            "type": "command",
-            "command": "memento.promptString",
-            "args": {
-                "id": "year",
-                "description": "Enter year to run",
-                "default": "0",
-                "placeholder": "Year"
-            }
-        },
-        {
-            "id": "file",
-            "type": "command",
-            "command": "memento.promptString",
-            "args": {
-                "id": "file",
-                "description": "Input file (optional)",
             }
         }
     ]

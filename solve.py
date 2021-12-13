@@ -3,6 +3,7 @@
 import sys
 import code
 import copy
+import time
 import inspect
 import logging
 import argparse
@@ -36,6 +37,7 @@ def main(args):
 
     # Get functions from module and validate them
     parse = getattr(mod, 'parse', None)
+    sample = getattr(mod, 'sample', None)
     part1 = getattr(mod, 'part1')
     part2 = getattr(mod, 'part2')
 
@@ -54,6 +56,10 @@ def main(args):
     # Read data from input file
     data = open(filename, 'rb').read().decode('utf8')
 
+    # If the module has sample data, and we're in the debugger
+    if sample is not None and sys.gettrace() is not None:
+        data = sample
+
     # Optionally parse data into a different format
     if parse is not None:
         data = parse(data)
@@ -64,13 +70,23 @@ def main(args):
 
     # Optionally run part 1
     if args.part in (None, 1):
-        ret = part1(copy.deepcopy(data))
-        print(f'PART1: {ret}')
+        copied = copy.deepcopy(data)
+
+        start = time.time()
+        ret = part1(copied)
+        end = time.time()
+
+        print(f'PART1: ({end - start:.04f}s) {ret}')
 
     # Optionally run part 2
     if args.part in (None, 2):
-        ret = part2(copy.deepcopy(data))
-        print(f'PART2: {ret}')
+        copied = copy.deepcopy(data)
+
+        start = time.time()
+        ret = part2(copied)
+        end = time.time()
+
+        print(f'PART2: ({end - start:.04f}s) {ret}')
 
     return 0
 
@@ -90,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('file', help='Input file', nargs='?')
 
     args = parser.parse_args()
-    if args.verbose == 1:
+    if args.verbose == 1 or sys.gettrace() is not None:
         logging.getLogger().setLevel(logging.INFO)
     elif args.verbose == 2:
         logging.getLogger().setLevel(logging.DEBUG)

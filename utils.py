@@ -122,12 +122,14 @@ def right(x, y):
     return x + 1, y
 
 class Grid:
+    DEFAULT = 0
+
     def __init__(self, height, width):
         logging.info('GRID: %s x %s', height, width)
         self.height = height
         self.width = width
 
-        self._grid = [0] * (height * width)
+        self._grid = [self.__class__.DEFAULT] * (height * width)
 
     @classmethod
     def init_with_data(cls, data):
@@ -221,7 +223,12 @@ class Grid:
             height = self.width * yy
             print(self._grid[0 + height:self.width + height])
 
-    def foreach(self):
-        for x in range(self.width):
-            for y in range(self.height):
+    def foreach(self, min_x=0, min_y=0, max_x=None, max_y=None):
+        if max_x is None:
+            max_x = self.width
+
+        if max_y is None:
+            max_y = self.height
+        for x in range(min_x, max_x):
+            for y in range(min_y, max_y):
                 yield (x, y)
