@@ -32,6 +32,8 @@ def main(args):
         return -1
 
     if args.challenge:
+        if mod.__doc__ is not None:
+            raise Exception('Challenge text already retrieved: %s' % (mod.__doc__))
         utils.challenge(year, args.day)
         return
 
@@ -57,7 +59,7 @@ def main(args):
     data = open(filename, 'rb').read().decode('utf8')
 
     # If the module has sample data, and we're in the debugger
-    if sample is not None and sys.gettrace() is not None:
+    if sample is not None and (sys.gettrace() is not None or args.sample):
         data = sample
 
     # Optionally parse data into a different format
@@ -98,6 +100,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--interact', help='Interact with data', action='store_true')
     parser.add_argument('-n', '--no-download', help='Do not check and download input data', action='store_true')
     parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[0, 1, 2])
+    parser.add_argument('-s', '--sample', help='Use the sample data if available', action='store_true')
     parser.add_argument('-v', '--verbose', help='Show verbose messages', action='count', default=0)
     parser.add_argument('-y', '--year', help='Specify year to play', type=int, default=NOW.year)
 
