@@ -1,4 +1,5 @@
 import copy
+import queue
 import logging
 import collections
 
@@ -30,10 +31,10 @@ class Grid(utils.Grid):
         ret = []
 
         for x, y in (up, down, left, right):
-            if x < 0 or x > self.width:
+            if x < 0 or x > self.width - 1:
                 continue
 
-            if y < 0 or y > self.height:
+            if y < 0 or y > self.height - 1:
                 continue
 
             ret.append((x,y))
@@ -54,52 +55,32 @@ class Grid(utils.Grid):
         source = (0, 0)
         target = (self.height - 1, self.width - 1)
 
-        Q = collections.deque()
+        Q = queue.PriorityQueue()
 
-        dist = {}
-        prev = {}
-
-        for xy in self.foreach():
-            dist[xy] = INFINITY
-            prev[xy] = None
-            Q.append(xy)
-
+        dist = collections.defaultdict(lambda: INFINITY)
         dist[source] = 0
 
-        while len(Q):
-            logging.info('QLEN: %s', len(Q))
-            u = None
-            mindist = INFINITY
-            for xy in Q:
-                if (d := dist[xy]) < mindist:
-                    mindist = d
-                    u = xy
+        prev = collections.defaultdict(lambda: None)
 
-            if u is None:
-                raise Exception('INVALID')
+        Q.put((0, source))
 
-            Q.remove(u)
-
-            if u == target:
-                S = []
-                if prev[u] is not None or u == source:
-                    while u is not None:
-                        S.insert(0, u)
-                        u = prev[u]
-
-                return S
+        while not Q.empty():
+            d, u = Q.get()
 
             for v in self.adjacent(*u):
-                if v not in Q:
-                    continue
-
                 alt = dist[u] + self[v]
                 if alt < dist[v]:
                     dist[v] = alt
                     prev[v] = u
+                    Q.put((alt, v))
 
-        raise Exception('No valid path found')
+        S = []
+        u = target
+        while u is not None:
+            S.insert(0, u)
+            u = prev[u]
 
+        return S
 
 def lowest(dict_):
     ret = ((0,0), INFINITY)
