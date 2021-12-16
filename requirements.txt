@@ -1,5 +1,6 @@
-requests
-pyparsing
+bs4
 networkx
 numpy
-bs4
+maturin
+pyparsing
+requests

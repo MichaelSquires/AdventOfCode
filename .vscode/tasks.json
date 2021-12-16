@@ -1,0 +1,52 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build pyrust package",
+            "type": "shell",
+            "command": "maturin",
+            "args": [
+                "build",
+                "--no-sdist",
+                "-i",
+                "python3.10"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/pyrust"
+            },
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "Build pyrust package (release)",
+            "type": "shell",
+            "command": "maturin",
+            "args": [
+                "build",
+                "--no-sdist",
+                "-i",
+                "python3.10",
+                "--release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/pyrust"
+            },
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "Install pyrust package",
+            "type": "shell",
+            "command": "pip",
+            "args": [
+                "install",
+                "--upgrade",
+                "${workspaceFolder}/pyrust/target/wheels/pyrust-0.1.0-cp310-cp310-manylinux_2_24_x86_64.whl"
+            ]
+        }
+    ]
+}

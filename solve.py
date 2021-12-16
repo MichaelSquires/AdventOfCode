@@ -4,9 +4,11 @@ import sys
 import code
 import copy
 import time
+import pstats
 import inspect
 import logging
 import argparse
+import cProfile
 import datetime
 import importlib
 
@@ -74,9 +76,23 @@ def main(args):
     if args.part in (None, 1):
         copied = copy.deepcopy(data)
 
+        if args.profile:
+            profiler = cProfile.Profile()
+            profiler.enable()
+
         start = time.time()
-        ret = part1(copied)
+
+        try:
+            ret = part1(copied)
+        except KeyboardInterrupt:
+            logging.warning('Caught Ctrl-C')
+
         end = time.time()
+
+        if args.profile:
+            profiler.disable()
+            stats = pstats.Stats(profiler).sort_stats('tottime')
+            stats.print_stats()  
 
         print(f'PART1: ({end - start:.04f}s) {ret}')
 
@@ -84,9 +100,23 @@ def main(args):
     if args.part in (None, 2):
         copied = copy.deepcopy(data)
 
+        if args.profile:
+            profiler = cProfile.Profile()
+            profiler.enable()
+
         start = time.time()
-        ret = part2(copied)
+
+        try:
+            ret = part2(copied)
+        except KeyboardInterrupt:
+            logging.warning('Caught Ctrl-C')
+
         end = time.time()
+
+        if args.profile:
+            profiler.disable()
+            stats = pstats.Stats(profiler).sort_stats('tottime')
+            stats.print_stats()  
 
         print(f'PART2: ({end - start:.04f}s) {ret}')
 
@@ -100,6 +130,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--interact', help='Interact with data', action='store_true')
     parser.add_argument('-n', '--no-download', help='Do not check and download input data', action='store_true')
     parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[0, 1, 2])
+    parser.add_argument('-P', '--profile', help='Profile parts', action='store_true')
     parser.add_argument('-s', '--sample', help='Use the sample data if available', action='store_true')
     parser.add_argument('-v', '--verbose', help='Show verbose messages', action='count', default=0)
     parser.add_argument('-y', '--year', help='Specify year to play', type=int, default=NOW.year)
