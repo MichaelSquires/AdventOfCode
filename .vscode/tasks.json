@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build pyrust package",
+            "label": "Build pyrust package (debug)",
             "type": "shell",
             "command": "maturin",
             "args": [
@@ -47,6 +47,27 @@
                 "--upgrade",
                 "${workspaceFolder}/pyrust/target/wheels/pyrust-0.1.0-cp310-cp310-manylinux_2_24_x86_64.whl"
             ]
+        },
+        {
+            "label": "Build and install pyrust (release)",
+            "dependsOn": [
+                "Build pyrust package (release)",
+                "Install pyrust package"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build and install pyrust (debug)",
+            "dependsOn": [
+                "Build pyrust package (debug)",
+                "Install pyrust package"
+            ],
+            "dependsOrder": "sequence"
         }
     ]
 }
