@@ -245,21 +245,21 @@ encoded BITS transmission?
 import math
 import logging
 
-#sample = 'D2FE28'
-#sample = '38006F45291200'
-#sample = 'EE00D40C823060'
-#sample = '8A004A801A8002F478'
-#sample = '620080001611562C8802118E34'
-#sample = 'C0015000016115A2E0802F182340'
-#sample = 'A0016C880162017C3686B18A3D4780'
-#sample = 'C200B40A82'
-#sample = '04005AC33890'
-#sample = '880086C3E88112'
-#sample = 'CE00C43D881120'
-#sample = 'D8005AC2A8F0'
-#sample = 'F600BC2D8F'
-#sample = '9C005AC2F8F0'
-sample = '9C0141080250320F1802104A08'
+#SAMPLE = 'D2FE28'
+#SAMPLE = '38006F45291200'
+#SAMPLE = 'EE00D40C823060'
+#SAMPLE = '8A004A801A8002F478'
+#SAMPLE = '620080001611562C8802118E34'
+#SAMPLE = 'C0015000016115A2E0802F182340'
+#SAMPLE = 'A0016C880162017C3686B18A3D4780'
+#SAMPLE = 'C200B40A82'
+#SAMPLE = '04005AC33890'
+#SAMPLE = '880086C3E88112'
+#SAMPLE = 'CE00C43D881120'
+#SAMPLE = 'D8005AC2A8F0'
+#SAMPLE = 'F600BC2D8F'
+#SAMPLE = '9C005AC2F8F0'
+SAMPLE = '9C0141080250320F1802104A08'
 
 hexmap = {
     '0': '0000', '1': '0001', '2': '0010', '3': '0011',
@@ -268,7 +268,7 @@ hexmap = {
     'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111',
 }
 
-version_total = 0
+VERTOT = 0
 
 class Packet:
     def __init__(self, data):
@@ -287,12 +287,10 @@ class Packet:
         return val
 
     def parse(self):
-        start = self.offset
-
         pkt_version = self.read(3)
 
-        global version_total
-        version_total += pkt_version
+        global VERTOT  # pylint: disable=global-statement
+        VERTOT += pkt_version
 
         logging.debug('VERSION: %s', pkt_version)
 
@@ -387,7 +385,7 @@ def part1(data):
     packet = Packet(data)
     packet.parse()
 
-    return version_total
+    return VERTOT
 
 def part2(data):
     packet = Packet(data)

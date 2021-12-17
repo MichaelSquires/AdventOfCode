@@ -79,7 +79,7 @@ def template(year, day):
 
     template += 'def part2(data):\n'
     template += '    pass'
-         
+
     outfile = pathlib.Path(f'{year}/d{day}.py')
     outfile.write_text(template)
 

@@ -100,7 +100,7 @@ import logging
 import itertools
 import collections
 
-sample = '''\
+SAMPLE = '''\
 NNCB
 
 CH -> B
@@ -148,7 +148,7 @@ def solve(data, steps):
     for ii in range(steps):
         new = collections.Counter()
         for pair, count in state.items():
-            first, last = pair 
+            first, last = pair
 
             rule = rules[pair]
 

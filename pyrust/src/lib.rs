@@ -5,16 +5,17 @@ use std::collections::{BinaryHeap, HashMap};
 
 const INFINITY: i32 = 2147483647;
 const INVALID: (i32, i32) = (-1, -1);
+const SOURCE: (i32, i32) = (0, 0);
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct Node {
-    u: (i32, i32),
-    d: i32
+    xy: (i32, i32),
+    val: i32
 }
 
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
-        other.d.cmp(&self.d)
+        other.xy.cmp(&self.xy)
     }
 }
 
@@ -25,21 +26,25 @@ impl PartialOrd for Node {
 }
 
 #[pyfunction]
-fn dijkstra(graph: Vec<i32>, height: i32, width: i32) -> PyResult<Vec<(i32, i32)>> {
+fn dijkstra(graph: &PyAny) -> PyResult<Vec<(i32, i32)>> {
+
+    let height: i32 = graph.getattr("height")?.extract()?;
+    let width: i32 = graph.getattr("width")?.extract()?;
+    let grid: Vec<i32> = graph.getattr("_grid")?.extract()?;
+
     let mut ret = Vec::new();
 
-    let source = (0, 0);
     let target = (height - 1, width - 1);
 
     let mut q = BinaryHeap::new();
     let mut dist = HashMap::<(i32, i32), i32>::new();
     let mut prev = HashMap::<(i32, i32), (i32, i32)>::new();
 
-    dist.insert(source, 0);
+    dist.insert(SOURCE, 0);
 
-    q.push(Node { u: source, d: 0 });
+    q.push(Node { xy: SOURCE, val: 0 });
 
-    while let Some(Node { u, d: _d }) = q.pop() {
+    while let Some(Node { xy: u, val: _d }) = q.pop() {
 
         for v in [(u.0, u.1+1), (u.0, u.1-1), (u.0-1, u.1), (u.0+1, u.1)].iter() {
             let (x, y) = *v;
@@ -49,14 +54,15 @@ fn dijkstra(graph: Vec<i32>, height: i32, width: i32) -> PyResult<Vec<(i32, i32)
                 continue;
             }
 
-            let alt = *dist.entry(u).or_insert(INFINITY) + graph[(x + width * y) as usize];
+            let val = grid[(x + width * y) as usize];
+            let alt = *dist.entry(u).or_insert(INFINITY) + val;
             let distv = dist.entry(*v).or_insert(INFINITY);
             let prevv = prev.entry(*v).or_insert(INVALID);
 
             if alt < *distv {
                 *distv = alt;
                 *prevv = u;
-                q.push(Node { u: *v, d: alt });
+                q.push(Node { xy: *v, val: alt });
             }
         }
     }

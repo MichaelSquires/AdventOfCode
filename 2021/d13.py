@@ -162,7 +162,7 @@ import collections
 
 import utils
 
-sample = '''\
+SAMPLE = '''\
 6,10
 0,14
 9,10
@@ -249,7 +249,7 @@ class Grid(utils.Grid):
         ret = ret.replace('1', '#')
 
         return ret
-    
+
 
 Instruction = collections.namedtuple('Instruction', ['axis', 'line'])
 Data = collections.namedtuple('Data', ['grid', 'instructions'])

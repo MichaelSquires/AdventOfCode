@@ -16,7 +16,7 @@ import utils
 
 NOW = datetime.datetime.now()
 
-def main(args):
+def main(args):  # pylint: disable=redefined-outer-name
 
     year = args.year
     if year == 0:
@@ -26,22 +26,22 @@ def main(args):
         # Retrieve module for given year and day
         mod = importlib.import_module(f'{year}.d{args.day}')
         if mod is None:
-            raise NotImplemented(f'{year}.d{args.day}')
+            raise NotImplementedError(f'{year}.d{args.day}')
 
     except ModuleNotFoundError:
-        logging.error(f'Module {year}/d{args.day}.py not found. Creating template')
+        logging.error('Module %s/d%s.py not found. Creating template', year, args.day)
         utils.template(year, args.day)
         return -1
 
     if args.challenge:
         if mod.__doc__ is not None:
-            raise Exception('Challenge text already retrieved: %s' % (mod.__doc__))
+            raise Exception(f'Challenge text already retrieved: {mod.__doc__}')
         utils.challenge(year, args.day)
         return
 
     # Get functions from module and validate them
     parse = getattr(mod, 'parse', None)
-    sample = getattr(mod, 'sample', None)
+    sample = getattr(mod, 'SAMPLE', None)
     part1 = getattr(mod, 'part1')
     part2 = getattr(mod, 'part2')
 
@@ -92,7 +92,7 @@ def main(args):
         if args.profile:
             profiler.disable()
             stats = pstats.Stats(profiler).sort_stats('tottime')
-            stats.print_stats()  
+            stats.print_stats()
 
         print(f'PART1: ({end - start:.04f}s) {ret}')
 
@@ -116,7 +116,7 @@ def main(args):
         if args.profile:
             profiler.disable()
             stats = pstats.Stats(profiler).sort_stats('tottime')
-            stats.print_stats()  
+            stats.print_stats()
 
         print(f'PART2: ({end - start:.04f}s) {ret}')
 
@@ -147,6 +147,6 @@ if __name__ == '__main__':
 
     try:
         sys.exit(main(args))
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-except
         logging.exception('ERROR in main: %s', exc)
         sys.exit(-1)

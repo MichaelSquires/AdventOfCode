@@ -2,7 +2,7 @@ import string
 import logging
 import itertools
 
-sample = '''\
+SAMPLE = '''\
 start-A
 start-b
 A-c
@@ -12,7 +12,7 @@ A-end
 b-end
 '''
 
-xsample = '''\
+SAMPLE2 = '''\
 dc-end
 HN-start
 start-kj

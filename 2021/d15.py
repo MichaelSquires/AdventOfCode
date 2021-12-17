@@ -199,13 +199,12 @@ to the bottom right?
 '''
 import copy
 import queue
-import logging
 import collections
 
 import utils
 import pyrust
 
-sample = '''\
+SAMPLE = '''\
 1163751742
 1381373672
 2136511328
@@ -245,7 +244,7 @@ class Grid(utils.Grid):
         return sum([self[xy] for xy in coords])
 
     def dijkstra(self):
-        return pyrust.dijkstra(self._grid, self.height, self.width)
+        return pyrust.dijkstra(self)  # pylint: disable=no-member
 
     def pydijkstra(self):
         '''
@@ -264,7 +263,7 @@ class Grid(utils.Grid):
         Q.put((0, source))
 
         while not Q.empty():
-            d, u = Q.get()
+            _, u = Q.get()
 
             for v in self.adjacent(*u):
                 alt = dist[u] + self[v]
