@@ -105,6 +105,13 @@ import logging
 
 from utils import *
 
+SAMPLE = '''\
+2199943210
+3987894921
+9856789892
+8767896789
+9899965678
+'''
 
 class Day9Grid(Grid):
     def adjacent(self, x, y):
@@ -120,7 +127,7 @@ class Day9Grid(Grid):
 
 def parse(data):
     data = [list(map(int, k)) for k in data.splitlines()]
-    return Day9Grid.init_with_data(data)
+    return Day9Grid.init_with_data(data, default=None)
 
 def part1(data):
     if data.width < 80:

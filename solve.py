@@ -5,7 +5,6 @@ import code
 import copy
 import time
 import pstats
-import inspect
 import logging
 import argparse
 import cProfile
@@ -45,9 +44,9 @@ def main(args):  # pylint: disable=redefined-outer-name
     part1 = getattr(mod, 'part1')
     part2 = getattr(mod, 'part2')
 
-    if ((parse is not None and not inspect.isfunction(parse)) or
-        not inspect.isfunction(part1) or
-        not inspect.isfunction(part2)):
+    if ((parse is not None and not callable(parse)) or
+        not callable(part1) or
+        not callable(part2)):
         raise Exception('Invalid day module')
 
     if not args.no_download:

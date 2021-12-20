@@ -58,7 +58,14 @@ def challenge(year, day):
                         if item.name != 'li':
                             continue
 
-                        text += '\n'.join(textwrap.wrap(item.text, width=80, initial_indent='  - ', subsequent_indent='    '))
+                        text += '\n'.join(
+                            textwrap.wrap(
+                                item.text,
+                                width=80,
+                                initial_indent='  - ',
+                                subsequent_indent='    '
+                            )
+                        )
                         text += '\n\n'
 
     text += '\'\'\'\n'
@@ -68,20 +75,20 @@ def challenge(year, day):
     outfile.write_text(text)
 
 def template(year, day):
-    template = ''
-    template += 'def parse(data):\n'
-    template += '    return data\n'
-    template += '\n'
+    outdata = ''
+    outdata += 'def parse(data):\n'
+    outdata += '    return data\n'
+    outdata += '\n'
 
-    template += 'def part1(data):\n'
-    template += '    pass\n'
-    template += '\n'
+    outdata += 'def part1(data):\n'
+    outdata += '    pass\n'
+    outdata += '\n'
 
-    template += 'def part2(data):\n'
-    template += '    pass'
+    outdata += 'def part2(data):\n'
+    outdata += '    pass'
 
     outfile = pathlib.Path(f'{year}/d{day}.py')
-    outfile.write_text(template)
+    outfile.write_text(outdata)
 
 def download(year, day):
     outfile = pathlib.Path(f'inputs/{year}/d{day}.txt')
@@ -97,7 +104,7 @@ def download(year, day):
     logging.debug('Writing input data: %s', req.text)
     outfile.write_text(req.text)
 
-def up(x, y):
+def up(x, y): # pylint: disable=invalid-name
     '''
     Return the coordinates above the argument
     '''
@@ -122,21 +129,20 @@ def right(x, y):
     return x + 1, y
 
 class Grid:
-    DEFAULT = 0
-
-    def __init__(self, height, width):
+    def __init__(self, height, width, default=0):
         logging.info('GRID: %s x %s', height, width)
         self.height = height
         self.width = width
+        self.default = default
 
-        self._grid = [self.__class__.DEFAULT] * (height * width)
+        self._grid = [self.default] * (height * width)
 
     @classmethod
-    def init_with_data(cls, data):
+    def init_with_data(cls, data, default=0):
         height = len(data)
         width = len(data[0])
 
-        grid = cls(height, width)
+        grid = cls(height, width, default=default)
 
         grid._grid = list(itertools.chain(*data))
 
@@ -147,15 +153,15 @@ class Grid:
         Get the value at the provided coordinates (x, y)
         '''
         if not isinstance(key, (tuple, list)):
-            raise TypeError('Invalid type: %s' % type(key))
+            raise TypeError(f'Invalid type: {type(key)}')
 
         x, y = key
 
         if x < 0 or x >= self.width:
-            return 0
+            return self.default
 
         if y < 0 or y >= self.height:
-            return 0
+            return self.default
 
         return self._grid[x + self.width * y]
 
@@ -164,7 +170,7 @@ class Grid:
         Set the value at the provided coordinates (x, y)
         '''
         if not isinstance(key, (tuple, list)):
-            raise TypeError('Invalid type: %s' % type(key))
+            raise TypeError('Invalid type: {type(key)}')
 
         x, y = key
 
@@ -182,12 +188,12 @@ class Grid:
     def _set(self, x, y, val):
         self[x, y] = val
 
-    def up(self, x, y):
+    def up(self, x, y):  # pylint: disable=invalid-name
         '''
         Return the value above the provided coordinates
         '''
         if y == 0:
-            return None
+            return self.default
 
         return self._get(*up(x, y))
 
@@ -196,7 +202,7 @@ class Grid:
         Return the value below the provided coordinates
         '''
         if y == self.height - 1:
-            return None
+            return self.default
 
         return self._get(*down(x, y))
 
@@ -205,7 +211,7 @@ class Grid:
         Return the value left of the provided coordinates
         '''
         if x == 0:
-            return None
+            return self.default
 
         return self._get(*left(x, y))
 
@@ -214,12 +220,12 @@ class Grid:
         Return the value right of the provided coordinates
         '''
         if x == self.width - 1:
-            return None
+            return self.default
 
         return self._get(*right(x, y))
 
     def print(self):
-        for yy in range(self.height):
+        for yy in range(self.height):  # pylint: disable=invalid-name
             height = self.width * yy
             print(self._grid[0 + height:self.width + height])
 

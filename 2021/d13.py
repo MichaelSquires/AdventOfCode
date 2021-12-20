@@ -187,7 +187,6 @@ fold along x=5
 '''
 
 class Grid(utils.Grid):
-    #DEFAULT = '.'
     def foldup(self, val):
         new = Grid(val, self.width)
 

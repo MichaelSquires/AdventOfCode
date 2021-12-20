@@ -2,4 +2,7 @@
 max-line-length=120
 
 [MESSAGES CONTROL]
-disable=missing-module-docstring, missing-class-docstring, missing-function-docstring
+disable=missing-module-docstring, missing-class-docstring, missing-function-docstring,unspecified-encoding
+
+[basic]
+good-names=i,k,ii,kk,x,y,xy
