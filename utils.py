@@ -74,7 +74,7 @@ def challenge(year, day):
     text += outfile.read_text()
     outfile.write_text(text)
 
-def template(year, day):
+def template(outfile):
     outdata = ''
     outdata += 'def parse(data):\n'
     outdata += '    return data\n'
@@ -87,7 +87,6 @@ def template(year, day):
     outdata += 'def part2(data):\n'
     outdata += '    pass'
 
-    outfile = pathlib.Path(f'{year}/d{day}.py')
     outfile.write_text(outdata)
 
 def download(year, day):

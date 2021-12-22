@@ -6,6 +6,7 @@ import copy
 import time
 import pstats
 import logging
+import pathlib
 import argparse
 import cProfile
 import datetime
@@ -21,15 +22,19 @@ def main(args):  # pylint: disable=redefined-outer-name
     if year == 0:
         year = NOW.year
 
+    if not (modfile := pathlib.Path(f'{year}/d{args.day}.py')).exists():
+        logging.error('Module %s not found. Creating template', modfile)
+        utils.template(modfile)
+        return -1
+
     try:
         # Retrieve module for given year and day
         mod = importlib.import_module(f'{year}.d{args.day}')
         if mod is None:
             raise NotImplementedError(f'{year}.d{args.day}')
 
-    except ModuleNotFoundError:
-        logging.error('Module %s/d%s.py not found. Creating template', year, args.day)
-        utils.template(year, args.day)
+    except ModuleNotFoundError as exc:
+        logging.error('Error importing module: %s/%s.py: %s', year, args.day, exc)
         return -1
 
     if args.challenge:
@@ -139,9 +144,9 @@ if __name__ == '__main__':
     parser.add_argument('file', help='Input file', nargs='?')
 
     args = parser.parse_args()
-    if args.verbose == 1 or sys.gettrace() is not None:
+    if args.verbose == 1:
         logging.getLogger().setLevel(logging.INFO)
-    elif args.verbose == 2:
+    elif args.verbose == 2 or sys.gettrace() is not None:
         logging.getLogger().setLevel(logging.DEBUG)
 
     try:

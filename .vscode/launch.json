@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run solver",
+            "name": "Run solver (current year)",
             "type": "python",
             "request": "launch",
             "program": "solve.py",
@@ -13,11 +13,11 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Download challenge text",
+            "name": "Run solver (enter year)",
             "type": "python",
             "request": "launch",
             "program": "solve.py",
-            "args": [ "-c", "${input:day}" ],
+            "args": [ "-y", "${input:year}", "${input:day}" ],
             "console": "integratedTerminal"
         }
     ],
@@ -29,6 +29,15 @@
             "args": {
                 "id": "day",
                 "description": "Enter day to run",
+            }
+        },
+        {
+            "id": "year",
+            "type": "command",
+            "command": "memento.promptString",
+            "args": {
+                "id": "year",
+                "description": "Enter year to run",
             }
         }
     ]

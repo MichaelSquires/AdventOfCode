@@ -2,7 +2,9 @@
 max-line-length=120
 
 [MESSAGES CONTROL]
-disable=missing-module-docstring, missing-class-docstring, missing-function-docstring,unspecified-encoding
+disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, unspecified-encoding, no-name-in-module
 
 [basic]
-good-names=i,k,ii,kk,x,y,xy
+attr-rgx=([a-zA-Z][a-zA-Z0-9]$|[a-z_][a-z0-9_]{2,30}$)
+variable-rgx=([a-zA-Z][a-zA-Z0-9]$|[a-z_][a-z0-9_]{2,30}$)
+argument-rgx=([a-zA-Z][a-zA-Z0-9]$|[a-z_][a-z0-9_]{2,30}$)
