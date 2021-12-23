@@ -1,4 +1,3 @@
-import sys
 import copy
 import enum
 import logging
@@ -8,32 +7,40 @@ class InvalidInstruction(Exception):
     pass
 
 class Opcode(enum.IntEnum):
-    ADD     = 1
-    MULT    = 2
-    INPUT   = 3
-    OUTPUT  = 4
-    JT      = 5
-    JF      = 6
-    LT      = 7
-    EQ      = 8
-    HALT    = 99
-
+    Add     = 1
+    Mult    = 2
+    Input   = 3
+    Output  = 4
+    Jt      = 5
+    Jf      = 6
+    Lt      = 7
+    Eq      = 8
+    Halt    = 99
+    
+INSTRUCTIONS = {}
+def instruction(opcode, opcount):
+    oplist = [f'op{k}' for k in range(1, opcount+1)]
+    ret = collections.namedtuple(opcode.name, oplist)
+    INSTRUCTIONS[opcode] = ret
+    return ret
+    
 # 0-opcode instructions
-Halt = collections.namedtuple('Halt', [])
+Halt = instruction(Opcode.Halt, 0)
 
 # 1-opcode instructions
-Input = collections.namedtuple('Input', ['op1'])
-Output = collections.namedtuple('Output', ['op1'])
+Input = instruction(Opcode.Input, 1)
+Output = instruction(Opcode.Output, 1)
 
 # 2-opcode instructions
-JumpTrue = collections.namedtuple('JumpTrue', ['op1', 'op2'])
-JumpFalse = collections.namedtuple('JumpFalse', ['op1', 'op2'])
+Jt = instruction(Opcode.Jt, 2)
+Jf = instruction(Opcode.Jf, 2)
 
 # 3-opcode instructions
-LessThan = collections.namedtuple('LessThan', ['op1', 'op2', 'op3'])
-Equal = collections.namedtuple('Equal', ['op1', 'op2', 'op3'])
-Add = collections.namedtuple('Add', ['op1', 'op2', 'op3'])
-Mult = collections.namedtuple('Mult', ['op1', 'op2', 'op3'])
+Lt = instruction(Opcode.Lt, 3)
+Eq = instruction(Opcode.Eq, 3)
+Add = instruction(Opcode.Add, 3)
+Mult = instruction(Opcode.Mult, 3)
+
 
 class InvalidOperand(Exception):
     pass
@@ -67,15 +74,23 @@ def opmode(opcode, oplist):
 
     return opcode % 100, opret
 
+def infunc():
+    return int(input('Enter value: '))
+
+def outfunc(val):
+    print(f'OUTPUT: {val}')
+    assert val == 0
+
 class Computer:
     def __init__(self):
+        super().__init__()
         self.pc = 0
         self.mem = []
 
         self.running = False
 
-        self.infunc = None
-        self.outfunc = None
+        self.infunc = infunc
+        self.outfunc = outfunc
 
     def _opval(self, op):
         match op:
@@ -93,40 +108,16 @@ class Computer:
         ### Read a full instruction
         opcode = self.mem[self.pc]
         opval, _ = opmode(opcode, ())
+        
+        inscls = INSTRUCTIONS.get(opval, None)
+        if inscls is None:
+            raise InvalidInstruction(f'Invalid opcode: {opcode}')
+            
+        _, oplist = opmode(opcode, self.mem[self.pc+1:self.pc+1+len(inscls._fields)])
+        
+        instruction = inscls(*oplist)
 
-        match opval:
-            # One-byte opcodes
-            case Opcode.HALT:   instruction = Halt()
-            case _:
-                op1 = self.mem[self.pc + 1]
-                opval, (op1,) = opmode(opcode, (op1,))
-
-                match opval:
-                    # Two-byte opcodes
-                    case Opcode.INPUT:  instruction = Input(op1)
-                    case Opcode.OUTPUT: instruction = Output(op1)
-                    case _:
-                        op2 = self.mem[self.pc + 2]
-                        opval, (op1, op2) = opmode(opcode, (op1, op2))
-
-                        match opval:
-                            # Three-byte opcodes
-                            case Opcode.JT: instruction = JumpTrue(op1, op2)
-                            case Opcode.JF: instruction = JumpFalse(op1, op2)
-                            case _:
-                                op3 = self.mem[self.pc + 3]
-                                opval, (op1, op2, op3) = opmode(opcode, (op1, op2, op3))
-
-                                match opval:
-                                    # Four-byte opcodes
-                                    case Opcode.LT:     instruction = LessThan(op1, op2, op3)
-                                    case Opcode.EQ:     instruction = Equal(op1, op2, op3)
-                                    case Opcode.ADD:    instruction = Add(op1, op2, op3)
-                                    case Opcode.MULT:   instruction = Mult(op1, op2, op3)
-                                    case _:
-                                        raise InvalidInstruction(f'Invalid opcode: {opcode}')
-
-        logging.debug('Decoded %s -> %s', self.mem[self.pc: self.pc + len(instruction) + 1], instruction)
+        logging.debug('Decoded (pc %d) %s -> %s', self.pc, self.mem[self.pc: self.pc + len(instruction) + 1], instruction)
         self.pc += len(instruction) + 1
 
         return instruction
@@ -140,29 +131,29 @@ class Computer:
                 self.running = False
 
             case Input(op1):
-                val = self.input()
+                val = self.infunc()
                 self.mem[op1] = val
 
             case Output(op1):
                 val = self._opval(op1)
-                self.output(val)
+                self.outfunc(val)
 
-            case JumpTrue(op1, op2):
+            case Jt(op1, op2):
                 val = self._opval(op1)
                 if val != 0:
                     self.pc = self._opval(op2)
 
-            case JumpFalse(op1, op2):
+            case Jf(op1, op2):
                 val = self._opval(op1)
                 if val == 0:
                     self.pc = self._opval(op2)
 
-            case LessThan(op1, op2, op3):
+            case Lt(op1, op2, op3):
                 val1 = self._opval(op1)
                 val2 = self._opval(op2)
                 self.mem[op3] = int(val1 < val2)
 
-            case Equal(op1, op2, op3):
+            case Eq(op1, op2, op3):
                 val1 = self._opval(op1)
                 val2 = self._opval(op2)
                 self.mem[op3] = int(val1 == val2)
@@ -194,21 +185,6 @@ class Computer:
                 self._run()
         finally:
             self.running = False
-
-    def input(self):
-        if self.infunc and callable(self.infunc):
-            return self.infunc()  # pylint: disable=not-callable
-
-        return int(input('Enter value: '))
-
-    def output(self, val):
-        self.out = val
-
-        if self.outfunc and callable(self.outfunc):
-            return self.outfunc(val)  # pylint: disable=not-callable
-
-        print(f'OUTPUT: {val}')
-        assert val == 0
 
 
 def parse(data):
