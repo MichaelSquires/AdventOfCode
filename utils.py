@@ -223,6 +223,9 @@ class Grid:
 
         return self._get(*right(x, y))
 
+    def count(self, val):
+        return self._grid.count(val)
+
     def print(self):
         for yy in range(self.height):  # pylint: disable=invalid-name
             height = self.width * yy
