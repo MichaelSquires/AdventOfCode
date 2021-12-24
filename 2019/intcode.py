@@ -1,6 +1,7 @@
 import copy
 import enum
 import logging
+import threading
 import collections
 
 class InvalidInstruction(Exception):
@@ -129,7 +130,7 @@ class Computer:
 
         if addr > len(self.mem) - 1:
             diff = addr - (len(self.mem) - 1)
-            logging.debug('Extending memory by %d', diff)
+            #logging.debug('Extending memory by %d', diff)
             self.mem += ([0] * diff)
 
     def _rval(self, op):
@@ -227,7 +228,14 @@ class Computer:
                 self._run()
         finally:
             self.running = False
+            
+    def stop(self):
+        self.running = False
 
+class ThreadedComputer(Computer, threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.daemon = True
 
 def parse(data):
     return list(map(int, data.split(',')))
