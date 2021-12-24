@@ -118,7 +118,7 @@ class Computer:
         
         instruction = inscls(*oplist)
 
-        logging.debug('Decoded (pc %d) %s -> %s', self.pc, self.mem[self.pc: self.pc + len(instruction) + 1], instruction)
+        #logging.debug('Decoded (pc %d) %s -> %s', self.pc, self.mem[self.pc: self.pc + len(instruction) + 1], instruction)
         self.pc += len(instruction) + 1
 
         return instruction
