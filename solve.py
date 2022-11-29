@@ -22,6 +22,9 @@ def main(args):  # pylint: disable=redefined-outer-name
     if year == 0:
         year = NOW.year
 
+    if not (yeardir := pathlib.Path(str(year))).exists():
+        yeardir.mkdir()
+
     if not (modfile := pathlib.Path(f'{year}/d{args.day}.py')).exists():
         logging.error('Module %s not found. Creating template', modfile)
         utils.template(modfile)
@@ -151,6 +154,6 @@ if __name__ == '__main__':
 
     try:
         sys.exit(main(args))
-    except Exception as exc:  # pylint: disable=broad-except
-        logging.exception('ERROR in main: %s', exc)
+    except Exception as fatal:  # pylint: disable=broad-except
+        logging.exception('ERROR in main: %s', fatal)
         sys.exit(-1)

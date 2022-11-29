@@ -75,19 +75,20 @@ def challenge(year, day):
     outfile.write_text(text)
 
 def template(outfile):
-    outdata = ''
-    outdata += 'def parse(data):\n'
-    outdata += '    return data\n'
-    outdata += '\n'
+    outdata = '''\
+    SAMPLE = 'SAMPLE INPUTS GO HERE AS STRING'
 
-    outdata += 'def part1(data):\n'
-    outdata += '    pass\n'
-    outdata += '\n'
+    def parse(data):
+        return data
 
-    outdata += 'def part2(data):\n'
-    outdata += '    pass'
+    def part1(data):
+        pass
 
-    outfile.write_text(outdata)
+    def part2(data):
+        pass
+    '''
+
+    outfile.write_text(textwrap.dedent(outdata))
 
 def download(year, day):
     outfile = pathlib.Path(f'inputs/{year}/d{day}.txt')
