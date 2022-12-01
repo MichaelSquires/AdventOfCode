@@ -11,6 +11,9 @@ Shell: `python3 solve.py <day>`
 
 ## Notes
 - The solution will automatically download the day's input if it doesn't already exist
+- If this is a fresh clone, you'll have to create a `session.txt` file with the
+hex value of the cookie (not including `session=`) so we can authenticate to the
+AoC website and download the inputs/challenges/etc.
 
 ## Adding new solutions
 - Run `solve.py` with a new year/day. If the module doesn't exist, it will be
