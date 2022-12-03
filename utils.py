@@ -78,7 +78,7 @@ def template(outfile):
     outdata = '''\
     SAMPLE = 'SAMPLE INPUTS GO HERE AS STRING'
 
-    def parse(data):
+    def parse(data: str):
         return data
 
     def part1(data):
