@@ -16,6 +16,30 @@ import utils
 
 NOW = datetime.datetime.now()
 
+def runpart(func, data, profile=False):
+    copied = copy.deepcopy(data)
+
+    if profile:
+        profiler = cProfile.Profile()
+        profiler.enable()
+
+    start = time.time()
+
+    try:
+        ret = func(copied)
+    except KeyboardInterrupt:
+        logging.warning('Caught Ctrl-C')
+
+    end = time.time()
+
+    if args.profile:
+        profiler.disable()
+        stats = pstats.Stats(profiler).sort_stats('tottime')
+        stats.print_stats()
+
+    if ret is not None:
+        print(f'{func.__name__}: ({end - start:.04f}s) {ret}')
+
 def main(args):  # pylint: disable=redefined-outer-name
 
     year = args.year
@@ -65,67 +89,30 @@ def main(args):  # pylint: disable=redefined-outer-name
         filename = f'inputs/{year}/d{args.day}.txt'
 
     # Read data from input file
-    data = open(filename, 'rb').read().decode('utf8')
+    data = [open(filename, 'rb').read().decode('utf8')]
 
     # If the module has sample data, and we're in the debugger
     if sample is not None and (sys.gettrace() is not None or args.sample):
+        if not isinstance(sample, list):
+            sample = [sample]
         data = sample
 
-    # Optionally parse data into a different format
-    if parse is not None:
-        data = parse(data)
-        logging.debug('DATA: %s', data)
+    for datum in data:
+        # Optionally parse data into a different format
+        if parse is not None:
+            datum = parse(datum)
+            logging.debug('DATA: %s', datum)
 
-    if args.interact:
-        code.interact(local=locals())
+        if args.interact:
+            code.interact(local=locals())
 
-    # Optionally run part 1
-    if args.part in (None, 1):
-        copied = copy.deepcopy(data)
+        # Optionally run part 1
+        if args.part in (None, 1):
+            runpart(part1, datum, profile=args.profile)
 
-        if args.profile:
-            profiler = cProfile.Profile()
-            profiler.enable()
-
-        start = time.time()
-
-        try:
-            ret = part1(copied)
-        except KeyboardInterrupt:
-            logging.warning('Caught Ctrl-C')
-
-        end = time.time()
-
-        if args.profile:
-            profiler.disable()
-            stats = pstats.Stats(profiler).sort_stats('tottime')
-            stats.print_stats()
-
-        print(f'PART1: ({end - start:.04f}s) {ret}')
-
-    # Optionally run part 2
-    if args.part in (None, 2):
-        copied = copy.deepcopy(data)
-
-        if args.profile:
-            profiler = cProfile.Profile()
-            profiler.enable()
-
-        start = time.time()
-
-        try:
-            ret = part2(copied)
-        except KeyboardInterrupt:
-            logging.warning('Caught Ctrl-C')
-
-        end = time.time()
-
-        if args.profile:
-            profiler.disable()
-            stats = pstats.Stats(profiler).sort_stats('tottime')
-            stats.print_stats()
-
-        print(f'PART2: ({end - start:.04f}s) {ret}')
+        # Optionally run part 2
+        if args.part in (None, 2):
+            runpart(part2, datum, profile=args.profile)
 
     return 0
 
