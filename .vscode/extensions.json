@@ -4,6 +4,8 @@
 
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
+		"vscodevim.vim",
+		"rust-lang.rust-analyzer",
 		"ms-vscode-remote.remote-containers"
 	],
 

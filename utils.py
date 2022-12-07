@@ -1,3 +1,4 @@
+import os
 import logging
 import pathlib
 import textwrap
@@ -16,11 +17,16 @@ __all__ = [
 ]
 
 def open_aoc(url):
-    session = pathlib.Path('session.txt')
-    if not session.exists():
-        raise FileNotFoundError('session.txt')
+    # Try to get the session ID from the environment first. If that fails, try
+    # session.txt on the filesystem
+    session_id = os.environ.get('AOC_SESSION')
+    if session_id is None:
+        session = pathlib.Path('session.txt')
+        if not session.exists():
+            raise FileNotFoundError('session.txt')
 
-    session_id = session.read_text().strip()
+        session_id = session.read_text().strip()
+
     cookies = dict(session=session_id)
 
     req = requests.get(url, cookies=cookies)
