@@ -1,4 +1,5 @@
 import os
+import copy
 import logging
 import pathlib
 import textwrap
@@ -247,3 +248,49 @@ class Grid:
         for x in range(min_x, max_x):
             for y in range(min_y, max_y):
                 yield (x, y)
+
+    def rotate(self):
+        data = copy.copy(self._grid)
+        grid = []
+
+        offset = 0
+        while len(grid) < self.height:
+            grid.append(data[offset:offset+self.width])
+            offset += self.width
+        
+        data = [list(reversed(k)) for k in zip(*grid)]
+        return self.__class__.init_with_data(data)
+
+    def hrange(self, start, end):
+        '''Get a slice of a row '''
+        assert isinstance(start, (list, tuple))
+        assert isinstance(end, (list, tuple))
+
+        # A row will have the same y coord
+        assert start[1] == end[1]
+
+        row = start[1]
+
+        start = start[0]
+        end = end[0]
+
+        return self._grid[(row * self.width) + start:(row * self.width) + end]
+
+    def vrange(self, start, end):
+        '''Get a slice of a column'''
+        assert isinstance(start, (list, tuple))
+        assert isinstance(end, (list, tuple))
+
+        # A column will have the same x coord
+        assert start[0] == end[0]
+
+        col = start[0]
+
+        start = start[1]
+        end = end[1]
+
+        ret = []
+        for ii in range(start, end):
+            ret.append(self._grid[col + (ii * self.width)])
+
+        return ret

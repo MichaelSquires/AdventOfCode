@@ -88,7 +88,10 @@ def main(args):  # pylint: disable=redefined-outer-name
     if not filename:
         filename = f'inputs/{year}/d{args.day}.txt'
 
-    # Read data from input file
+    # Read data from input file. Wrap it in a list because the samples imported
+    # from a module could be a list that we want to iterate over. This just
+    # makes the code easier since it can just iterate over the single element in
+    # the list
     data = [open(filename, 'rb').read().decode('utf8')]
 
     # If the module has sample data, and we're in the debugger
@@ -131,7 +134,7 @@ if __name__ == '__main__':
 
     # Positional arguments
     parser.add_argument('day', help='Day to solve', type=int, choices=range(1,26))
-    parser.add_argument('file', help='Input file', nargs='?')
+    parser.add_argument('file', help='Input file. Defaults to inputs/$YEAR/d$DAY.txt', nargs='?')
 
     args = parser.parse_args()
     if args.verbose == 1:
