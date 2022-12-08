@@ -30,7 +30,10 @@ def open_aoc(url):
 
     cookies = dict(session=session_id)
 
-    req = requests.get(url, cookies=cookies)
+    headers = requests.utils.default_headers()
+    headers.update({'User-Agent': 'github.com/MichaelSquires/AdventOfCode'})
+
+    req = requests.get(url, cookies=cookies, headers=headers)
     if not req.ok:
         raise Exception(f'Error downloading AoC data: {req.reason}')
 
