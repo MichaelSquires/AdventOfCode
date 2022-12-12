@@ -38,7 +38,7 @@ def runpart(func, data, profile=False):
         stats.print_stats()
 
     if ret is not None:
-        print(f'{func.__name__}: ({end - start:.04f}s) {ret}')
+        print(f'{func.__name__}: ({(end - start) * 1000:.04f}ms) {ret}')
 
 def main(args):  # pylint: disable=redefined-outer-name
 
@@ -86,13 +86,13 @@ def main(args):  # pylint: disable=redefined-outer-name
 
     filename = args.file
     if not filename:
-        filename = f'inputs/{year}/d{args.day}.txt'
+        filename = pathlib.Path(f'inputs/{year}/d{args.day}.txt')
 
     # Read data from input file. Wrap it in a list because the samples imported
     # from a module could be a list that we want to iterate over. This just
     # makes the code easier since it can just iterate over the single element in
     # the list
-    data = [open(filename, 'rb').read().decode('utf8')]
+    data = [filename.read_text()]
 
     # If the module has sample data, and we're in the debugger
     if sample is not None and (sys.gettrace() is not None or args.sample):
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     # Positional arguments
     parser.add_argument('day', help='Day to solve', type=int, choices=range(1,26))
-    parser.add_argument('file', help='Input file. Defaults to inputs/$YEAR/d$DAY.txt', nargs='?')
+    parser.add_argument('file', help='Input file. Defaults to inputs/$YEAR/d$DAY.txt', nargs='?', type=pathlib.Path)
 
     args = parser.parse_args()
     if args.verbose == 1:
