@@ -1,6 +1,5 @@
 import queue
 import string
-import logging
 import collections
 
 import utils
@@ -14,19 +13,22 @@ acctuvwj
 abdefghi
 '''
 
-INDICES = 'S' + string.ascii_lowercase + 'E'
-START = INDICES.index('S')
-END = INDICES.index('E')
+VALUES = 'S' + string.ascii_lowercase + 'E'
+START = VALUES.index('S')
+END = VALUES.index('E')
 
 INFINITY = 2**32
 
 class Grid(utils.Grid):
     def dijkstra(self, source, target):
-        return pyrust.y22d12(self, source, target)
+        return pyrust.y22d12(self, source, target)  # pylint: disable=no-member
 
-    def pydijkstra(self, source, target):
+    def dijkstra_find(self, source, target_val):
         '''
-        https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+        Dijkstra search for target_val of cell instead of coordinates
+
+        NOTE: This is a non-standard dijkstra algorithm. Do not copy this to
+        future days
         '''
         Q = queue.PriorityQueue()
 
@@ -37,15 +39,23 @@ class Grid(utils.Grid):
 
         Q.put((0, source))
 
+        target = None
+
         while not Q.empty():
             _, u = Q.get()
 
             here = self[u]
 
+            # Break if we find a coord that has the target value
+            if here == target_val:
+                target = u
+                break
+
             for v in self.adjacent(*u):
-                # NOTE: This is non-standard for dijkstra. Do not copy this to
-                # future days
-                if self[v] > here + 1:
+                # For this challenge, we can't step up more than one at a time.
+                # Since we're searching backward, that means we can't step down
+                # more than one at a time.
+                if self[v] < here - 1:
                     continue
 
                 alt = dist[u] + self[v]
@@ -62,38 +72,22 @@ class Grid(utils.Grid):
 
         return S
 
+
 def parse(data: str):
-    values = []
-
-    for line in data.splitlines():
-        values.append([INDICES.index(k) for k in line])
-
-    return Grid.init_with_data(values)
-
+    data = [list(map(VALUES.index, k)) for k in data.splitlines()]
+    return Grid.init_with_data(data)
 
 def part1(grid: Grid):
     start = grid.find(START)
     end = grid.find(END)
     
     path = grid.dijkstra(start, end)
+    # Path includes the source coordinates so sub 1
     return len(path) - 1
 
 def part2(grid: Grid):
-    start = grid.find(START)
     end = grid.find(END)
 
-    grid[start] = INDICES.index('a')
-
-    best = INFINITY
-    
-    for xy in grid.findall(INDICES.index('a')):
-        path = grid.dijkstra(xy, end)
-
-        attempt = len(path) - 1
-        if attempt <= 0:
-            continue
-
-        if attempt < best and attempt != 0:
-            best = attempt
-
-    return best
+    path = grid.dijkstra_find(end, VALUES.index('a'))
+    # Path includes the source coordinates so sub 1
+    return len(path) - 1
