@@ -297,3 +297,36 @@ class Grid:
             ret.append(self._grid[col + (ii * self.width)])
 
         return ret
+
+    def find(self, val):
+        for xy in self.foreach():
+            if self[xy] == val:
+                return xy
+        raise ValueError(f'Value not found in grid: {val}')
+
+    def findall(self, val):
+        ret = []
+        for xy in self.foreach():
+            if self[xy] == val:
+                ret.append(xy)
+
+        return ret
+
+    def adjacent(self, x, y):
+        _up = up(x, y)
+        _down = down(x, y)
+        _left = left(x, y)
+        _right = right(x, y)
+
+        ret = []
+
+        for x, y in (_up, _down, _left, _right):
+            if x < 0 or x > self.width - 1:
+                continue
+
+            if y < 0 or y > self.height - 1:
+                continue
+
+            ret.append((x,y))
+
+        return ret
