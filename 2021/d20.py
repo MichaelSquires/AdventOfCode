@@ -245,5 +245,8 @@ def solve(count, data):
 
     return grid.count(1)
 
-part1 = functools.partial(solve, 2)
-part2 = functools.partial(solve, 50)
+def part1(data):
+    return solve(2, data)
+
+def part2(data):
+    return solve(50, data)

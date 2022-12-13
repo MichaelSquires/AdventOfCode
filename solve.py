@@ -37,8 +37,12 @@ def runpart(func, data, profile=False):
         stats = pstats.Stats(profiler).sort_stats('tottime')
         stats.print_stats()
 
+    exectime = (end - start) * 1000
+
     if ret is not None:
-        print(f'{func.__name__}: ({(end - start) * 1000:.04f}ms) {ret}')
+        print(f'{func.__name__}: ({exectime:.04f}ms) {ret}')
+
+    return exectime
 
 def main(args):  # pylint: disable=redefined-outer-name
 
@@ -100,6 +104,12 @@ def main(args):  # pylint: disable=redefined-outer-name
             sample = [sample]
         data = sample
 
+    if not args.sample:
+        assert len(data) == 1
+
+    p1time = None
+    p2time = None
+
     for datum in data:
         # Optionally parse data into a different format
         if parse is not None:
@@ -111,11 +121,14 @@ def main(args):  # pylint: disable=redefined-outer-name
 
         # Optionally run part 1
         if args.part in (None, 1):
-            runpart(part1, datum, profile=args.profile)
+            p1time = runpart(part1, datum, profile=args.profile)
 
         # Optionally run part 2
         if args.part in (None, 2):
-            runpart(part2, datum, profile=args.profile)
+            p2time = runpart(part2, datum, profile=args.profile)
+
+    if not args.sample and not args.no_exectime and p1time is not None and p2time is not None:
+        utils.exectime(args.year, args.day, p1time, p2time)
 
     return 0
 
@@ -124,6 +137,7 @@ if __name__ == '__main__':
 
     # Optional arguments
     parser.add_argument('-c', '--challenge', help='Download challenge text', action='store_true')
+    parser.add_argument('-e', '--no-exectime', help='Do not record execution time', action='store_true')
     parser.add_argument('-i', '--interact', help='Interact with data', action='store_true')
     parser.add_argument('-n', '--no-download', help='Do not check and download input data', action='store_true')
     parser.add_argument('-p', '--part', help='Specify which part to run', type=int, choices=[0, 1, 2])

@@ -1,8 +1,11 @@
 import os
+import re
+import ast
 import copy
 import logging
 import pathlib
 import textwrap
+import functools
 import itertools
 
 import bs4
@@ -113,6 +116,57 @@ def download(year, day):
 
     logging.debug('Writing input data: %s', req.text)
     outfile.write_text(req.text)
+
+# Exectime header
+ET_HEADER = textwrap.dedent('''\
+    ## Solution execution times
+    NOTE: All times in milliseconds
+
+    | Year | Day | Part 1 | Part 2 |
+    | ---- | --- | ------ | ------ |
+    ''')
+
+# Exectime regex
+# | 2022 | 1   | 2.0000 | 2.0010 |
+ET_RGX = re.compile('\| (?P<year>\d+) \| (?P<day>\d+) \| (?P<p1time>\d+.\d+) \| (?P<p2time>\d+.\d+) \|')
+
+def exectime(year, day, p1time, p2time):
+
+    outfile = pathlib.Path('EXECTIMES.md')
+    with outfile.open('r') as fp:
+        indata = fp.read()
+
+    matches = [list(map(ast.literal_eval, m)) for m in ET_RGX.findall(indata)]
+    matches.append((year, day, p1time, p2time))
+
+    # Deduplicate data by copying it through a dict with (year, day) as the key
+    matches = {(k[0], k[1]):(k[2], k[3]) for k in matches}
+    matches = [k+v for k,v in matches.items()]
+
+    def cmp(a,b):
+        ayear, aday, _, _ = a
+        byear, bday, _, _ = b
+        if ayear == byear:
+            if aday == bday:
+                return 0
+            elif aday < bday:
+                return -1
+            else:
+                return 1
+        elif ayear < byear:
+            return -1
+        else:
+            return 1
+
+    matches.sort(key=functools.cmp_to_key(cmp), reverse=True)
+
+    outdata = ET_HEADER
+    for match in matches:
+        year, day, p1time, p2time = match
+        outdata += f'| {year} | {day} | {p1time:.4f} | {p2time:.4f} |\n'
+
+    with outfile.open('w') as fp:
+        fp.write(outdata)
 
 def up(x, y): # pylint: disable=invalid-name
     '''

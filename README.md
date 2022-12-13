@@ -22,3 +22,6 @@ AoC website and download the inputs/challenges/etc.
 ## Download challenge text
 After completing both parts (so you get part two also), run `solve.py -c <DAY>`
 to download the challenge text directly to the top of the year/day module.
+
+## Solution execution times
+View solution execution times here: [EXECTIMES.md](EXECTIMES.md)
