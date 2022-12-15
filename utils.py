@@ -15,6 +15,7 @@ __all__ = [
     'challenge',
     'download',
     'template',
+    'exectime',
 
     'Grid',
     'up', 'down', 'left', 'right'
@@ -36,7 +37,7 @@ def open_aoc(url):
     headers = requests.utils.default_headers()
     headers.update({'User-Agent': 'github.com/MichaelSquires/AdventOfCode'})
 
-    req = requests.get(url, cookies=cookies, headers=headers)
+    req = requests.get(url, cookies=cookies, headers=headers, timeout=10)
     if not req.ok:
         raise Exception(f'Error downloading AoC data: {req.reason}')
 
@@ -128,7 +129,7 @@ ET_HEADER = textwrap.dedent('''\
 
 # Exectime regex
 # | 2022 | 1   | 2.0000 | 2.0010 |
-ET_RGX = re.compile('\| (?P<year>\d+) \| (?P<day>\d+) \| (?P<p1time>\d+.\d+) \| (?P<p2time>\d+.\d+) \|')
+ET_RGX = re.compile(r'\| (?P<year>\d+) \| (?P<day>\d+) \| (?P<p1time>\d+.\d+) \| (?P<p2time>\d+.\d+) \|')
 
 def exectime(year, day, p1time, p2time):
 
@@ -291,10 +292,10 @@ class Grid:
     def count(self, val):
         return self._grid.count(val)
 
-    def print(self):
+    def print(self, xoffset=0, yoffset=0):
         for yy in range(self.height):  # pylint: disable=invalid-name
-            height = self.width * yy
-            print(self._grid[0 + height:self.width + height])
+            height = self.width * (yy - yoffset)
+            print(self._grid[0+xoffset + height:self.width + height])
 
     def foreach(self, min_x=0, min_y=0, max_x=None, max_y=None):
         if max_x is None:
@@ -314,7 +315,7 @@ class Grid:
         while len(grid) < self.height:
             grid.append(data[offset:offset+self.width])
             offset += self.width
-        
+
         data = [list(reversed(k)) for k in zip(*grid)]
         return self.__class__.init_with_data(data)
 
@@ -384,3 +385,15 @@ class Grid:
             ret.append((x,y))
 
         return ret
+
+    def extend(self, new_height, new_width):
+        assert new_height >= self.height
+        assert new_width >= self.width
+
+        grid = Grid(new_height, new_width)
+        for xy in self.foreach():
+            grid[xy] = self[xy]
+
+        self.height = new_height
+        self.width = new_width
+        self._grid = copy.copy(grid._grid)
