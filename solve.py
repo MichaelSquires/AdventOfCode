@@ -42,6 +42,9 @@ def runpart(func, data, profile=False):
     if ret is not None:
         print(f'{func.__name__}: ({exectime:.04f}ms) {ret}')
 
+    if ret is None:
+        exectime = 0.0
+
     return exectime
 
 def main(args):  # pylint: disable=redefined-outer-name
@@ -127,7 +130,7 @@ def main(args):  # pylint: disable=redefined-outer-name
         if args.part in (None, 2):
             p2time = runpart(part2, datum, profile=args.profile)
 
-    if not args.sample and not args.no_exectime and p1time is not None and p2time is not None:
+    if not args.sample and not args.no_exectime:
         utils.exectime(args.year, args.day, p1time, p2time)
 
     return 0
